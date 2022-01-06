@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.pdf
+*.pyc
+*.png
+poetry.lock
+data
+*back
+

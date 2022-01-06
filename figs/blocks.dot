@@ -1,0 +1,132 @@
+digraph Blocks {
+    node [shape=rect, width=1.4, height=1, fixedsize=true];
+    splines=line;
+    rankdir = TB;
+    subgraph cluster_AM7164 {
+        labeljust="l";
+        label = "AM7164";
+        acc_1_1 [label="Uniaxial\npiezoelectrical\naccelerometer"]
+        acc_1_2 [label="Analog\nbandpass\nfilter\n(discrete)"]
+        subgraph cluster_CPU_1 {
+            cpu_1_1 [label = "8-bit A/D"]
+            cpu_1_2 [label = "Sampling 10 Hz"]
+            cpu_1_3 [style=invis]
+            cpu_1_4  [style=invis]
+            cpu_1_5 [label = "Counts\n(stored\non device)"]
+        }
+        { rank= same acc_1_1 acc_1_2 cpu_1_1 cpu_1_2 cpu_1_3 cpu_1_4 cpu_1_5 }
+        acc_1_1 -> acc_1_2 -> cpu_1_1 -> cpu_1_2 -> cpu_1_5 
+        cpu_1_2 -> cpu_1_3 [style=invis];
+        cpu_1_3 -> cpu_1_4 [style=invis];
+        cpu_1_4 -> cpu_1_5 [style=invis];
+    }
+
+    subgraph cluster_GT1M {
+        labeljust="l";
+        label = "GT1M, GT2M, GT3X, ActiGo, ActiTrainer";
+        acc_2_1 [label="MEMS analog\naccelerometer"]
+        acc_2_2 [label="Analog lowpass\nfilter\n(15 Hz)"]
+        subgraph cluster_CPU_2 {
+            cpu_2_1 [label = "12-bit A/D"]
+            cpu_2_2 [label = "Sampling 30 Hz"]
+            cpu_2_3 [style=invis]
+            cpu_2_4 [label = "Digital\nbandpass\nfilter"]
+            cpu_2_5 [label = "Counts\n(stored\non device)"]
+        }
+        { rank= same acc_2_1 acc_2_2 cpu_2_1 cpu_2_2 cpu_2_3 cpu_2_4 cpu_2_5 }
+        acc_2_1 -> acc_2_2 -> cpu_2_1 -> cpu_2_2
+        cpu_2_2 -> cpu_2_3 [style=invis]
+        cpu_2_3 -> cpu_2_4 [style=invis]
+        cpu_2_2 -> cpu_2_4
+        cpu_2_4 -> cpu_2_5
+    }
+
+    subgraph cluster_GT3X {
+        labeljust="l";
+        label = "GT3X+, wGT3X+ (NEO, CLE serial Numbers)";
+        acc_3_1 [label="MEMS analog\naccelerometer"]
+        acc_3_2 [label="Analog lowpass\nfilter\n(15 Hz)"]
+        subgraph cluster_CPU_3 {
+            label = "CPU";
+            cpu_3_1 [label = "12-bit A/D"]
+            cpu_3_2 [label = "Sampling\n30-100 Hz"]
+            cpu_3_3 [label = "Raw data\n(stored\non device)"]
+            cpu_3_4 [label = "Downsampling\nto 30 Hz and\ndigital bandpass\nfilter"]
+            cpu_3_5 [label = "Counts\n(stored\non device)"]
+        }
+        { rank= same acc_3_1 acc_3_2 cpu_3_1 cpu_3_2 cpu_3_3 cpu_3_4 cpu_3_5 }
+        acc_3_1 -> acc_3_2 -> cpu_3_1 -> cpu_3_2 -> cpu_3_3 -> cpu_3_4 -> cpu_3_5
+    }
+
+    subgraph cluster_wGT3X {
+        labeljust="l";
+        label = "wGT3X-BT, GT9X (MOS, TAS serial Numbers)";
+        subgraph cluster_internalacc_1 {
+            acc_4_1 [label="MEMS digital\naccelerometer\n(12-bit, 256 Hz)"];
+            acc_4_2 [label="Lowpass\nfilter and data\noutput (256 Hz)"];
+        }
+        subgraph cluster_CPU_4 {
+            label = "CPU";
+            cpu_4_1 [label = "Digital\nlowpass filter\n(15 Hz)"];
+            cpu_4_2 [label = "Downampling\nto 30-100 Hz"]
+            cpu_4_3 [label = "Raw data\n(stored\non device)"]
+            cpu_4_4 [label = "Downsampling\nto 30 Hz and\ndigital bandpass\nfilter"]
+            cpu_4_5 [label = "Counts\n(stored\non device)"]
+        }
+        { rank= same acc_4_1 acc_4_2 cpu_4_1 cpu_4_2 cpu_4_3 cpu_4_4 cpu_4_5 }
+        acc_4_1 -> acc_4_2 -> cpu_4_1 -> cpu_4_2 -> cpu_4_3 -> cpu_4_4 -> cpu_4_5
+    }
+
+    subgraph cluster_insight {
+        labeljust="l";
+        label = "CenterPoint Insight Watch (CPIW)";
+        subgraph cluster_internalacc_1 {
+            acc_5_1 [label="MEMS digital\naccelerometer\n(12-bit, 256 Hz)"];
+            acc_5_2 [label="Lowpass\nfilter "];
+        }
+        subgraph cluster_CPU_4 {
+            label = "CPU";
+            cpu_5_1 [label = "Raw data\n(32, 64, 128 or\n 256 Hz, stored\non device)"]
+        }
+        subgraph cluster_centerpoint {
+            cp_5_1 [label = "Upsampling to\n256 Hz and\ndigital lowpass\nfilter (15 Hz)"];
+            cp_5_2 [label = "Downampling\n256 Hz to 30 Hz"]
+            cp_5_3 [label = "Digital bandpass\nfilter"]
+            cp_5_4 [label = "Counts"]
+        }
+        { rank= same acc_5_1 acc_5_2 cpu_5_1 cp_5_1 cp_5_2 cp_5_4 cp_5_3 }
+        acc_5_1 -> acc_5_2 -> cpu_5_1 -> cp_5_1 -> cp_5_2 -> cp_5_3 -> cp_5_4
+    }
+
+    subgraph cluster_legend {
+        labeljust="l";
+        label = "Legend";
+        acc[label = "Accelerometer"];
+        cpu[label = "Device\nprocessor"];
+        cp[label = "Cloud"];
+        { rank = same acc cpu cp };
+    }
+
+    acc_1_1 -> acc_2_1[style=invis];
+    acc_2_1 -> acc_3_1[style=invis];
+    acc_3_1 -> acc_4_1[style=invis];
+    acc_4_1 -> acc_5_1[style=invis];
+    cpu_5_1 -> acc[style=invis];
+    cp_5_1 -> cpu[style=invis];
+    cp_5_2 -> cp[style=invis];
+
+    acc, acc_1_1, acc_1_2, acc_2_1, acc_2_2, acc_3_1, acc_3_2,
+     acc_4_1, acc_4_2, acc_5_1, acc_5_2 [style="filled",
+     fillcolor=gainsboro]
+    cpu, cpu_1_1, cpu_1_2, cpu_1_5,
+     cpu_2_1, cpu_2_2, cpu_2_4, cpu_2_5,
+     cpu_3_1, cpu_3_2, cpu_3_3, cpu_3_4, cpu_3_5,
+     cpu_4_1, cpu_4_2, cpu_4_3, cpu_4_4, cpu_4_5,
+     cpu_5_1 [style="filled",
+     fillcolor=beige]
+    cp, cp_5_1, cp_5_2, cp_5_3, cp_5_4 [style="filled", fillcolor=burlywood1]
+
+    cpu_1_5, cpu_2_5, cpu_3_5, cpu_4_5, cp_5_4 [fontname="times-bold"]
+    
+}
+
