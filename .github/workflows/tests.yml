@@ -48,4 +48,4 @@ jobs:
         - name: Style
           run: poetry run make lint
         - name: Test
-          run: poetry run make test
+          run: poetry run make test_fast
