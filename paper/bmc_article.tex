@@ -1,0 +1,743 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.html and the instructions for   %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% additional documentclass options:
+%  [doublespacing]
+%  [linenumbers]   - put the line numbers on margins
+
+%%% loading packages, author definitions
+
+%\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+\documentclass{bmcart}
+
+%%% Load packages
+\usepackage{url}
+\usepackage{amsthm,amsmath}
+\RequirePackage{natbib}
+%\RequirePackage[authoryear]{natbib}% uncomment this for author-year bibliography
+%\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %%
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %%
+%%  submitted article.                         %%
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\includegraphic{}
+\def\includegraphics{}
+
+%%% Put your definitions there:
+\startlocaldefs
+\endlocaldefs
+
+%%% Begin ...
+\begin{document}
+
+%%% Start of article front matter
+\begin{frontmatter}
+
+	\begin{fmbox}
+		\dochead{Software}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%                                          %%
+		%% Enter the title of your article here     %%
+		%%                                          %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\title{Quantification of Acceleration as Activity Counts in
+			ActiGraph Wearables}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%                                          %%
+		%% Enter the authors here                   %%
+		%%                                          %%
+		%% Specify information, if available,       %%
+		%% in the form:                             %%
+		%%   <key>={<id1>,<id2>}                    %%
+		%%   <key>=                                 %%
+		%% Comment or delete the keys which are     %%
+		%% not used. Repeat \author command as much %%
+		%% as required.                             %%
+		%%                                          %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\author[
+			addressref={actigraph},
+			% id's of addresses, e.g. {aff1,aff2}
+			corref={actigraph},
+			% id of corresponding address, if any
+			% noteref={n1},                % id's of article notes, if any
+			email={ali.neishabouri@theactigraph.com}
+			% email address
+		]{\inits{AN}\fnm{Ali} \snm{Neishabouri}}
+		\author[
+			addressref={actigraph},
+			email={joe.nguyen@theactigraph.com}
+			% email address
+		]{\inits{JN}\fnm{Joe} \snm{Nguyen}}
+		\author[
+			addressref={actigraph, mit},
+			email={johnsam@alum.mit.edu}
+			% email address
+		]{\inits{JS}\fnm{John} \snm{Samuelsson}}
+		\author[
+			addressref={actigraph},
+			email={tyler.guthrie@theactigraph.com}
+			% email address
+		]{\inits{JS}\fnm{Tyler} \snm{Guthrie}}
+		\author[
+			addressref={actigraph},
+			email={matt.biggs@theactigraph.com}
+			% email address
+		]{\inits{MB}\fnm{Matt} \snm{Biggs}}
+		\author[
+			addressref={actigraph},
+			email={jeremy.wyatt@theactigraph.com}
+			% email address
+		]{\inits{JW}\fnm{Jeremy} \snm{Wyatt}}
+		\author[
+			addressref={actigraph},
+			email={doug.cross@theactigraph.com}
+			% email address
+		]{\inits{DC}\fnm{Doug} \snm{Cross}}
+		\author[
+			addressref={hsph},
+			email={mkaras@hsph.harvard.edu}
+			% email address
+		]{\inits{MK}\fnm{Marta} \snm{Karas}}
+		\author[
+			addressref={kolinska,granada},
+			email={jairo.hidalgo.migueles@ki.se}
+			% email address
+		]{\inits{JHM}\fnm{Jairo H.} \snm{Migueles}}
+		\author[
+			addressref={actigraph,mgh},
+			email={sheraz.khan@theactigraph.com}
+			% email address
+		]{\inits{SK}\fnm{Sheraz} \snm{Khan}}
+		\author[
+			addressref={actigraph},
+			email={christine.guo@theactigraph.com}
+			% email address
+		]{\inits{CCG}\fnm{Christine C.} \snm{Guo}}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%                                          %%
+		%% Enter the authors' addresses here        %%
+		%%                                          %%
+		%% Repeat \address commands as much as      %%
+		%% required.                                %%
+		%%                                          %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\address[id=actigraph]{%                           % unique id
+			\orgname{ActiGraph LLC},
+			% university, etc
+			\street{49 East Chase St.},
+			%
+			\postcode{FL 32502}
+			% post or zip code
+			\city{Pensacola},
+			% city
+			\cny{US}
+			% country
+		}
+		\address[id=mit]{%
+			\orgname{Massachusetts Institute of Technology},
+			\street{77 Massachusetts Avenue},
+			\postcode{MA 02139}
+			\city{Cambridge},
+			\cny{US}
+		}
+		\address[id=hsph]{%
+			\orgname{Department of Biostatistics, Harvard T.H. Chan
+				School of Public Health, Harvard University},
+			\street{677 Huntington Avenue},
+			\postcode{MA 02115}
+			\city{Boston},
+			\cny{US}
+		}
+		\address[id=kolinska]{%
+			\orgname{Department of Biosciences and Nutrition,
+				Karolinska Institutet},
+			\city{Huddinge},
+			\cny{Sweden}
+		}
+		\address[id=granada]{%
+			\orgname{PROFITH “PROmoting FITness and Health through
+				physical activity”
+				Research Group, Sport and Health University
+				Research Institute (iMUDS),
+				Department of Physical Education and Sports,
+				Faculty of Sport Sciences,
+				University of Granada},
+			\city{Granada},
+			\cny{Spain}
+		}
+		\address[id=mgh]{%
+			\orgname{Athinoula A. Martinos Center for Biomedical
+				Imaging, MGH/MIT/Harvard},
+			\street{149, 13th ST}
+			\postcode{MA 02129}
+			\city{Boston},
+			\cny{US}
+		}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%                                          %%
+		%% Enter short notes here                   %%
+		%%                                          %%
+		%% Short notes will be after addresses      %%
+		%% on first page.                           %%
+		%%                                          %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\begin{artnotes}
+			%\note{Sample of title note}     % note to the article
+			%\note[id=n1]{Equal contributor} % note, connected to author
+		\end{artnotes}
+
+	\end{fmbox}% comment this for two column layout
+
+	\begin{abstractbox}
+
+		\begin{abstract} % abstract
+			\parttitle{Background}
+			%if any
+			Digital clinical measures based on data collected by
+			wearable devices have seen rapid growth in both clinical trials and healthcare.
+			The widely-used measures based on wearables are epoch-based physical activity
+			counts using accelerometer data. Even though activity counts have been the
+			backbone of thousands of clinical and epidemiological studies, there are large
+			variations of the algorithms that compute counts and their associated
+			parameters – many of which have often been kept proprietary by device
+			providers. This lack of transparency has hindered comparability between studies
+			using different devices and limited their broader clinical applicability.
+			ActiGraph devices have been the most-used wearable accelerometer devices for
+			over two decades.
+
+			\parttitle{Results}
+			%if any
+			Recognizing the importance of data transparency,
+			interpretability and interoperability to both research and clinical use, we
+			here describe the detailed counts algorithms of five generations of ActiGraph
+			devices going back to the first AM7164 model, and publish the current counts
+			algorithm in ActiGraph’s ActiLife and CentrePoint software as a standalone
+			Python package for research use.
+
+			\parttitle{Conclusion}
+			We believe that this material will provide a useful
+			resource for the research community, accelerate digital health science and
+			facilitate clinical applications of wearable accelerometry.
+		\end{abstract}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%                                          %%
+		%% The keywords begin here                  %%
+		%%                                          %%
+		%% Put each keyword in separate \kwd{}.     %%
+		%%                                          %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\begin{keyword}
+			\kwd{accelerometer}
+			\kwd{count}
+			\kwd{actigraphy}
+			\kwd{IMU}
+		\end{keyword}
+
+		% MSC classifications codes, if any
+		%\begin{keyword}[class=AMS]
+		%\kwd[Primary ]{}
+		%\kwd{}
+		%\kwd[; secondary ]{}
+		%\end{keyword}
+
+	\end{abstractbox}
+	%
+	%\end{fmbox}% uncomment this for twcolumn layout
+
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% start of article main body
+% <put your article body there>
+
+%%%%%%%%%%%%%%%%
+%% Background %%
+%%
+\section*{Background}
+The rapid advances in computing and micro-electromechanical systems (MEMS)
+technology have created new opportunities for monitoring health in people's
+free-living environment over extended time periods. In particular, as wearable
+devices are capable of quantifying patients’ behaviors continuously with
+minimal burden, they can provide more comprehensive, ecological and objective
+health information than what is possible with conventional in-clinic and
+questionnaire-based assessments \cite{chinapaw_physical_2010,
+	lee_validity_2011, van_poppel_physical_2010}. For these reasons, the use of
+wearable devices for clinical purposes has seen rapid expansion in recent years
+and is expected to grow further in the upcoming years
+\cite{strain_wearable-device-measured_2020}. One of the most used outcomes
+provided by wearable devices is accelerometry-based physical activity measures.
+Physical activity measures have been used in clinical trials and shown
+superiority in detecting treatment related changes over conventional
+endpoints \cite{nathan_randomized_2020}. Progress has also been made in the
+qualification of digital endpoints based on counts of physical activity with
+both US and EU in respiratory and cardiovascular diseases
+\cite{european_medicines_agency_qualification_2018,
+	european_medicines_agency_qualification_2019}.
+
+While the origin of the term “count” is not documented, it likely goes back to
+the modification and use of watches for measuring activity, specifically
+hyperactivity in children where pedometers were too large
+\cite{bell_adaptation_1968, johnson_hyperactivity_1971,maccoby_activity_1965,
+	schulman_objective_1959}. This was achieved by a winding weight that was free
+to pivot about its axis and therefore sensitive to acceleration while being
+connected to the hands of the watch via gears, causing the minutes and hours
+hands to tick when the watch experienced acceleration and thus allowing for
+reading the accumulated “counts” of movements from the watch the same way as
+one would read the time \cite{schulman_objective_1959}. As electronics
+technology evolved, solid-state analog-to-digital converters became widely
+available and allowed for enhanced acceleration measurements and storing the
+activity data in a digital format inside the watch
+\cite{redmond_observations_1985, taylor_new_1982, tryon_fully_1996}. The first
+activity watch provided by ActiGraph was model AM7164 (ActiGraph, Pensacola
+(FL), USA) that used a uniaxial piezoelectrical accelerometer in the form of a
+mechanical lever \cite{tryon_fully_1996}. To remove artifacts unrelated to
+human movement, subsecond-level measurements of acceleration (expressed in \textit{g})
+were passed through an analog band-pass filter before it was sampled at 10 Hz
+and quantized by an 8-bit analog-to-digital converter, thus yielding 256
+distinct levels of acceleration, each of these levels considered to be 1 count.
+These were then summed within given time intervals, or “epochs”, and the
+resulting counts were stored on the device (hence, each epoch could contribute
+up to 255 counts to the total).
+
+The counts unit is thus a measure that quantifies acceleration within a time
+interval, or “epoch”, with one epoch typically being 10-60 seconds long. The
+reliance on epoch-based counts was a necessity in earlier models, due to the
+limitation of on-board storage and battery capacity. While this limitation was
+overcome with hardware improvements and ActiGraph has been able to provide
+multi-day raw data since 2010, digital clinical measures and validation
+evidence continue to evolve around counts.  Because the algorithms that
+transform the raw accelerometer data into counts vary across devices, many of
+which have also been held proprietary, digital measures based on counts are
+therefore device dependent, making it difficult to compare results across
+clinical studies and establish reproducibility and validation evidence
+\cite{jul_4_comparing_2001,paul_comparison_2007, straker_translation_2012}. The
+obscurity of the count algorithms has also led to the common misconception that
+“counts” is a universal unit of measurement that is the same across devices,
+where even with an algorithm as simple as the one described below, variations
+in parameters such as the length of each epoch or the precision of the
+quantization process can lead to vastly different counts. Therefore, the
+advances of digital health science could be greatly facilitated with a higher
+level of algorithm transparency.
+
+ActiGraph devices (ActiGraph, Pensacola, FL, USA) have been the most-used
+wearable accelerometry, or actigraphy, devices for over two decades, with more
+than 20,000 papers published using ActiGraph devices by the end of 2021. While
+the original methods for computing counts in the earlier models have been
+published \cite{tryon_fully_1996}, the detailed algorithms and their evolution
+over the years have not been made public. Several studies have attempted to
+reverse engineer the ActiGraph counts algorithms or relate them to the counts
+algorithms of other devices \cite{brond_generating_2017, brond_sampling_2016,
+	paul_comparison_2007,straker_translation_2012}. While these studies have been
+critically important to gain further understanding of acceleration counts and
+how it relates across devices, they have been limited by the lack of access to
+the ActiGraph firmware and software code and device documentation. In this
+article, we address this gap by presenting an overview of the counts algorithms
+of ActiGraph devices along with a detailed description of the counts algorithm
+in both the ActiLife software (ActiGraph, Pensacola, FL, USA) and the
+CentrePoint cloud service (ActiGraph, Pensacola, FL, USA). An open-source
+Python package is also made available for use by the research community.  By
+doing so, we hope to facilitate reproducibility efforts and enhance
+transparency in the field of wearable accelerometry and accelerate its clinical
+use.
+
+\section*{Implementation}
+Internal documentation of ActiGraph devices was reviewed to catalog the
+different processing steps to convert from raw data to counts. The code for
+converting raw data into counts in the ActiLife software was inspected along
+with the firmware documentation for ActiGraph models wGT3X-BT, GT9X, and
+CentrePoint Insight Watch (CPIW). The ActiLife counts algorithm was translated
+into a standalone Python package which converts raw data into counts at
+user-defined sampling frequencies and epoch lengths. The Python code was then
+converted into pseudocode, i.e. human-understandable basic instructions that
+can easily be translated back into any programming language. The code and
+pseudocode thus apply to wGT3X-BT, GT9X, and CPIW, although CPIW requires a
+down-sampling step before the computational pipeline described in the
+pseudocode can be applied, since the sampling rate is different in CPIW
+compared to the wGT3X-BT and GT9X models.
+
+The Python code (Python 3.7.6) was validated to the counts algorithm in
+ActiLife (version 6.13.4) and in CentrePoint (version 3.29.0) by comparing
+counts output from the Python code with that of the ActiLife software and
+CentrePoint using the same raw input data, sampling frequency and epoch length.
+The raw input data were simulated Gaussian white noise and therefore consisted
+of a broad range of frequencies. The code was tested for all admissible
+sampling frequencies of these models (30, 40, \ldots, 100 Hz) and varying epoch
+durations.
+
+\section*{Results}
+We first present here a flowchart overview of the processing pipelines to
+derive counts across five generations of ActiGraph models
+(Fig.~\ref{fig:pipeline}). It is important to note that all counts algorithms
+outlined here produce counts after band pass filtering the raw signal. The
+conversion of the raw data into counts depends therefore not only on the
+amplitude of the raw data but also on its spectral content. In the CPIW model
+(bottom row in Figure~\ref{fig:pipeline}), the accelerometer applies an
+anti-aliasing low-pass filter before the signal is sampled to respect Nyquist's
+theorem \cite{shannon_communication_1949}, and both the low-pass -3 dB cutoff
+frequency and the sampling frequency are adjustable; the possible output data
+rates are 32, 64, 128, and 256 Hz and the associated low-pass cutoff
+frequencies are 16, 16, 32, and 64 Hz, respectively. The process of converting
+raw data to counts (highlighted in bold in Fig.~\ref{fig:pipeline}) for the
+newer models wGT3X-BT, GT9X, and CPIW are further elucidated below
+(Fig.~\ref{fig:alg}).
+
+\begin{enumerate}
+
+	\item{Only for CPIW; resample data to 30 Hz (from 32, 64, 128 or 256
+	            Hz). Otherwise assert that sampling frequency is between 30 and 100 Hz and a
+	            multiple of 10 Hz.}
+	\item{If sampling frequency is not a multiple of 30, then up-sample by
+	            a factor of 3 to make it a multiple of 30 and low pass filter. This is achieved
+	            by the following steps:
+	            \begin{align*}
+		            v       & = \textrm{array of size } (3 \times
+		            \textrm{length of raw signal}) \textrm{ filled with } 0 \\
+		            w       & = v
+		            \\
+		            v_{3\times i} & = \textrm{raw signal}_i ~\forall i\in
+		            \left[ 0, \ldots, \textrm{size}(\textrm{raw signal})\right]            \\
+		            w_i     & = \frac{3\pi}{\pi+3\times2}
+		            v_i+\frac{3\pi}{\pi+3\times2}v_{i-1} +\frac{2\times3-\pi}{\pi+2\times3}w_{i-1} \forall i
+	            \end{align*}
+	      }
+	\item{Down-sample to 30 Hz. Since the signal is a multiple of 30 Hz,
+	            the down-sampling is straightforward by keeping every $m^\textrm{th}$ sample,
+	            where m is the up-sampled frequency divided by 30;
+	            \begin{align*}
+		            m   & = \frac{\textrm{up-sampled frequency}}{30} \\
+		            x_i & = w_{m\times i}~\forall i
+	            \end{align*}
+	      }
+	\item{
+	Band-pass filter the down-sampled signal. This is done by firstly
+	defining the filter (a 7th order IIR filter), which can be described by the
+	rational transfer function in the z-transform domain as:
+
+	$$\hat{X}(z)=\frac{\sum_{i=0}^{7}b_iz^{-i}}{\sum_{i=0}^{7}a_iz^{-i}}X(z)$$
+	where $a_0=1$,	$a_1=-3.63$, $a_2=5.04$, $a_3=-3.10$, $a_4=0.506$,
+	$a_5=0.324$, $a_6=-0.157$, $a_7=0.0195$, and $b_0=-0.00934$, $b_1=-0.0255$,
+	$b_2=-0.00424$, $b_3=0.0442$, $b_4=0.0365$, $b_5=-0.0119$, $b_6=-0.0229$,
+	$b_7=-0.00679$ \cite{tryon_fully_1996}. These coefficients have been rounded to
+	3 significands – please refer to the public code for the exact numbers. The
+	initial condition that generates a steady state to a step response of this
+	filter is then found, and the down-sampled signal $x_i$ is filtered using this
+	initial state and the filter described above, resulting in the filtered signal
+	$\hat{x}_i$.}
+	\item{Rescale the filtered signal by a factor $a$ ($a=\frac{3.0 /
+			    4096.0}{2.6 / 256.0} \times 237.5 \approx 17.127404$), in order
+	            to replicate the range of the AM7164.
+	            $$\tilde{x}_i=a\hat{x}_i$$}
+	\item{Rectify the rescaled signal: $$\bar{x}_i =|\tilde{x}_i|$$}
+	\item{Threshold the rectified signal so that all entries greater than
+	            128 is set to 128 and all entries smaller than 4 are set to 0:
+	            \[
+		            \overrightarrow{x}_i = \begin{cases}
+			            128                       & (\bar{x}_i>128)
+			            \\
+			            \textrm{floor}(\bar{x}_i) &
+			            (4\leq\bar{x}_i\leq128)                           \\
+			            0                         & (\bar{x}_i<4)
+		            \end{cases}
+	            \]
+	      }
+	\item{Further down-sample the signal and low-pass filter to 10 Hz by a
+	non-overlapping moving average:
+
+	$$\check{x}_j=\left\{\textrm{floor}(\frac{\overrightarrow{x}_i+\overrightarrow{
+				x}_{i+1}+\overrightarrow{x}_{i+2}}{3})\right\}_{i=0,3,6,\ldots}$$
+	}
+	\item{Finally, find the counts by summing the down-sampled signal
+	            within the predefined epoch length l (seconds) for each axis:
+
+	            $$\textrm{counts}_i=\sum_{j=i\cdot10\cdot l}^{(i+1)\cdot10\cdot l}\check{x}_j$$}
+
+\end{enumerate}
+
+The python code was validated to the ActiLife software and CentrePoint service
+using synthetic raw data as described in the methods section. Validation was
+performed on four cases with 1000 simulations each: corresponding to
+combinations of raw data at 10 or 30 Hz sampling rate and epoch of 10 or 30 sec
+duration. We did not find any differences between the values returned by any of
+the three implementations.
+
+\section*{Discussion}
+Remote clinical assessments based on wearable devices have the potential to
+transform clinical development and care
+\cite{strain_wearable-device-measured_2020}. This potential requires robust
+validation evidence and can be facilitated with a greater level of algorithm
+transparency. Here we provided an overview of the counts algorithms of five
+generations of ActiGraph devices (Fig.~\ref{fig:pipeline}), released a Python
+package that replicates the counts algorithm in ActiGraph’s ActiLife software
+under an open source license, validated the Python code to the output from
+ActiLife (Fig.~\ref{fig:results}) and detailed the numerical steps of arriving
+at counts in pseudocode (Fig.~\ref{fig:alg}). We believe that this material
+will be an important and useful resource for the research community.
+
+Several kinds of counts algorithms have been used in the literature: Time above
+threshold, zero-crossing and digital integration \cite{jul_4_comparing_2001}.
+While the time above threshold and zero-crossing techniques have mostly been
+used in older devices, all ActiGraph models have used the digital integration
+technique, which is thought to be superior to the other counts techniques
+\cite{redmond_observations_1985} in terms of component size, power consumption,
+and accuracy in presence of noise. The processing steps of this technique
+differed between devices, as successive generations of ActiGraph devices made
+use of the latest advances in hardware and software technology. The computation
+processes have gradually evolved to being done
+in the CentrePoint cloud, and less so in the device microprocessor. Care has been
+taken in order to maintain comparability between counts extracted from
+different devices, so that the activity counts computed from the same
+acceleration input would stay consistent across generations of hardware and
+software platforms \cite{cain_comparison_2013, feito_evaluation_2012,
+	grydeland_comparison_2014} although, due to the vastly different technologies
+involved, differences have been found notably in minutes of vigorous activity
+per day \cite{whitaker_comparison_2018}. This attention to data compatibility
+due to platform upgrades in clinical investigation has also been noted in the
+recent FDA draft guidelines on digital health technologies
+\cite{research_digital_2021}.
+
+\citet{brond_generating_2017} tried to reverse engineer the ActiLife counts
+algorithm by reproducing the counts output from raw data input. The ActiGraph
+digital band-pass filter was approximated using Matlab’s \emph{invfreqz}
+function. The reverse engineered counts algorithm was then applied to raw data
+from a different activity monitor; Axivity AX3 (Axivity, Newcastle UK) and they
+found generally high concordance between this output and the output from
+ActiLife applied to raw data from the GT3X+ monitor (not statistically
+significant from zero for mechanical validation experiment and 2.2\% mean
+difference from free-living conditions). Figure 1 in
+\citet{brond_generating_2017} outlines the steps in the derived counts
+algorithm which corresponds rather well with Figure~\ref{fig:alg} in the
+present paper which details the ActiLife counts algorithm, although many of the
+computational steps happen in a different order. Furthermore, the ActiLife
+digital band-pass filter that was approximated in \citet{brond_generating_2017}
+is different from the one implemented in ActiLife; the ActiLife band-pass
+filter is a $7^\textrm{th}$ order IIR filter while the one estimated in their
+study is a 20-order filter.
+
+With the many versions of activity counts and additional open source activity
+metrics, such as Euclidean Norm Minus One (ENMO), Activity Index (AI)
+\cite{bai_activity_2016, hees_separating_2013}, it is important to apply the
+cut points developed for the right type of activity counts.  On the other hand,
+since there is generally high correlation between these activity metrics, it is
+feasible to compare the findings using different metrics with relatively simple
+conversion factors.  In an experiment under free-living condition,
+\citet{paul_comparison_2007} showed that there was a significant difference in
+the counts output between the ActiGraph AM7164 monitor and the ones of Actical
+(MM; Mini-Mitter Co.) and it can be reduced significantly by the conversion
+equations they developed. \citet{straker_translation_2012} also presented a
+linear conversion equation relating the vertical component of the ActiGraph
+GT3X model with the Actical counts.
+
+To further facilitate the use and comparability of ActiGraph counts, we here
+also publish the codes in an open source Python package. The code validation
+showed perfect correspondence between ActiLife, CenterPoint, and the published
+Python code (see Fig.~\ref{fig:results}). Although we expect and indeed observe
+small differences between the intermediary results of different implementations
+due to the nature of working with floating point numbers, these differences had no
+effect on the final results of these algorithms.
+
+\section*{Conclusion}
+Quantifying acceleration in ‘counts’ started due to technical limitations in
+the earliest wearable devices but has demonstrated its value for clinical
+research and is still omnipresent in the field of wearable accelerometry.
+Counts is not a universal unit, and the relationship between raw acceleration
+data and counts is complicated and varies between device models. Therefore,
+detailed understanding of the computation from raw accelerometer data to counts
+is necessary for interpreting clinical outcomes across studies and advancing
+the clinical application of wearable technology. In addition, proper
+demonstration and documentation of signal processing steps are necessary in
+obtaining regulatory agreement in the use of digital health technologies tools
+in clinical trials and/or medical devices. We hope that by publishing and
+detailing the counts algorithms of ActiGraph devices in this study, we could
+help accelerate digital health science and facilitate clinical applications of
+wearable accelerometry.
+
+\section*{List of Abbreviations}
+\begin{itemize}
+\item{MEMS: Micro-ElectroMechanical  Systems}
+\item{CPIW: CenterPoint Insight Watch}
+\item{FDA: U.S. Food and Drug Administration}
+\item{ENMO: Euclidean norm minus one}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Backmatter begins here                   %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{backmatter}
+	\section*{Declarations}
+	\subsection*{Ethics approval and consent to participate}
+	Not applicable
+	\subsection*{Consent for publication}
+	Not applicable
+	\subsection*{Availability of data and materials}
+	The count algorithm and the code to reproduce and plot the validation
+	data presented in Figure~\ref{fig:results} are publicly available at
+	\url{https://github.com/actigraph/agcounts}. The code is also available as a
+	python package. The parser for GT3x files is available at
+	\url{https://github.com/actigraph/pygt3x}.
+
+	All code is released as-is, with no guarantee of functionality.
+	\subsection*{Competing interests}
+	Ali Neishabouri, Joe Nguyen, Tyler Guthrie, Matt Biggs, Jeremy Wyatt,
+	Doug Cross, and Christine Guo are employed by ActiGraph. Sheraz Khan and John
+	Samuelsson are providing consulting services to ActiGraph.
+	\subsection*{Funding}
+	Jairo H. Migueles is supported by the Swedish Research Council for
+	Health, Working Life and Welfare (FORTE) (dnr: 2021-00036).
+
+	\subsection*{Authors' contributions}
+	AN implemented the final version of the algorithm, and took the lead for finalising the manuscript. JS wrote the first version of this manuscript and the algorithm. JN, TG, MB, JW and DC provided information on existing implementations and the history of the algorithm. JN also provided ground truth values used for testing the new implementation. MK, JHM, SK and CCG provided scientific input and helped on the interpretation of results.  All authors provided critical feedback and helped shape the research, analysis and manuscript.
+	\subsection*{Acknowledgements}
+	Not Applicable
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%                  The Bibliography                       %%
+	%%                                                         %%
+	%%  Bmc_mathpys.bst  will be used to                       %%
+	%%  create a .BBL file for submission.                     %%
+	%%  After submission of the .TEX file,                     %%
+	%%  you will be prompted to submit your .BBL file.         %%
+	%%                                                         %%
+	%%                                                         %%
+	%%  Note that the displayed Bibliography will not          %%
+	%%  necessarily be rendered by Latex exactly as specified  %%
+	%%  in the online Instructions for Authors.                %%
+	%%                                                         %%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	% if your bibliography is in bibtex format, use those commands:
+	\bibliographystyle{plainnat} % Style BST file (bmc-mathphys, vancouver, spbasic).
+	\bibliography{bmc_article}	% Bibliography file (usually '*.bib' )
+	% for author-year bibliography (bmc-mathphys or spbasic)
+	% a) write to bib file (bmc-mathphys only)
+	% @settings{label, options="nameyear"}
+	% b) uncomment next line
+	%\nocite{label}
+
+	% or include bibliography directly:
+	% \begin{thebibliography}
+	% \bibitem{b1}
+	% \end{thebibliography}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%                               %%
+	%% Figures                       %%
+	%%                               %%
+	%% NB: this is for captions and  %%
+	%% Titles. All graphics must be  %%
+	%% submitted separately and NOT  %%
+	%% included in the Tex document  %%
+	%%                               %%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%
+	%% Do not use \listoffigures as most will included as separate files
+
+	\section*{Figures}
+	\begin{figure}[h!]
+		\caption{\csentence{Conceptual schematic of the computational
+				pipeline for generating counts for five generations of ActiGraph accelerometer
+				models (rows).}
+			Raw data measures acceleration in free fall
+			acceleration (g) units. Functions performed by the microprocessor, the
+			accelerometer and in the CentrePoint cloud are highlighted in yellow, gray and
+			orange, respectively. The analog band-pass filters are implemented using a
+			series of cascaded op amp circuits, the -3dB cutoff frequency is shown in
+			parenthesis. A/D is the analog-to-digital converter (white blocks), shown
+			together with the bit size of the quantizer. The counts data blocks are
+			highlighted in boldface.}
+		\label{fig:pipeline}
+	\end{figure}
+	\begin{figure}[h!]
+		\caption{\csentence{Flowchart showing the process of converting
+				raw data into counts.}}
+		\label{fig:alg}
+	\end{figure}
+	\begin{figure}[h!]
+		\caption{\csentence{Comparison of counts generated by our
+				python code and those generated by CenterPoint.} Each plot corresponds to a
+			combination of data sampling rate and epoch length. From top to bottom: 30Hz
+			and 30s, 40Hz and 30s, 30Hz and 10s, 40Hz and 10s.
+			\label{fig:results}
+		}
+	\end{figure}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%                               %%
+	%% Tables                        %%
+	%%                               %%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{backmatter}
+\end{document}
