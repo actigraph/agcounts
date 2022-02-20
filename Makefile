@@ -7,7 +7,7 @@ PDFS = $(SOURCES:.dot=.pdf)
 	dot -Tpng $*.dot -o $@
 
 %.pdf: %.dot
-	dot -Tpng $*.dot -o $@
+	dot -Tpdf $*.dot -o $@
 
 all: png pdf
 

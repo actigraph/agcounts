@@ -27,9 +27,10 @@ EPOCHS = [30, 10]
 
 
 def generate_plots(epochs: List[int], frequencies: List[int]):
-    font = {"size": 16}
+    plt.style.use('_mpl-gallery')
+    font = {"size": 22}
     plt.rc("font", **font)
-    fig_size = (20, 20)
+    fig_size = (20, 15)
     plt.ioff()
     for i in range(3):
         _ = plt.figure(figsize=fig_size, dpi=300)
