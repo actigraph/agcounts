@@ -114,7 +114,7 @@
 			% email address
 		]{\inits{JN}\fnm{Joe} \snm{Nguyen}}
 		\author[
-			addressref={actigraph, mit},
+			addressref={actigraph, mgh},
 			email={johnsam@alum.mit.edu}
 			% email address
 		]{\inits{JS}\fnm{John} \snm{Samuelsson}}
@@ -378,12 +378,12 @@ multi-day raw data since 2010, digital clinical measures and validation
 evidence continue to evolve around counts.  Because the algorithms that
 transform the raw accelerometer data into counts vary across devices, many of
 which have also been held proprietary, digital measures based on counts are
-therefore device dependent, making it difficult to compare results across
+device dependent, making it difficult to compare results across
 clinical studies and establish reproducibility and validation evidence
 \cite{jul_4_comparing_2001,paul_comparison_2007, straker_translation_2012}. The
 obscurity of the count algorithms has also led to the common misconception that
 “counts” is a universal unit of measurement that is the same across devices,
-where even with an algorithm as simple as the one described below, variations
+where even with an algorithm such as the one described below, variations
 in parameters such as the length of each epoch or the precision of the
 quantization process can lead to vastly different counts. Therefore, the
 advances of digital health science could be greatly facilitated with a higher
@@ -526,7 +526,7 @@ newer models wGT3X-BT, GT9X, and CPIW are further elucidated below
 The python code was validated to the ActiLife software and CentrePoint service
 using synthetic raw data as described in the methods section. Validation was
 performed on four cases with 1000 simulations each: corresponding to
-combinations of raw data at 10 or 30 Hz sampling rate and epoch of 10 or 30 sec
+combinations of raw data at 40 or 30 Hz sampling rate and epoch of 10 or 30 sec
 duration. We did not find any differences between the values returned by any of
 the three implementations.
 
