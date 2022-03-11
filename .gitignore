@@ -6,5 +6,4 @@
 poetry.lock
 data
 *back
-
-.Rproj.user
+r
