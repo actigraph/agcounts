@@ -259,27 +259,26 @@ def _resample(
     upsample_data = np.zeros((m, upsample_factor * n), dtype=raw.dtype)
     upsample_data[:, ::upsample_factor] = raw
 
-    # Allocate memory and then LPF.  LPF is only done at non
-    # integer multiples of 30 Hz. This LPF is garbage and does a
-    # poor job of attenuating higher frequencies that need to be
-    # rejected. This is the reason why there is aliasing which
-    # causes the "tail" on the epochs.
-    lpf_upsample_data = np.zeros_like(upsample_data)
-    if frequency not in [30, 60, 90]:
-      if verbose:
-	      print("Upsampling data")       
-      lpf_upsample_data = np.zeros(
-        (raw.shape[0], int(raw.shape[1] * upsample_factor + 1))
-        )
-
     pi = np.pi  # 3.1415926535897932385
     a_fp = pi / (pi + 2 * upsample_factor)
     b_fp = (pi - 2 * upsample_factor) / (pi + 2 * upsample_factor)
     up_factor_fp = upsample_factor
 
+    # raw doesn't need to be used after this
+    if frequency != 30:
+      raw = []
+
+    # Allocate memory and then LPF.  LPF is only done at non
+    # integer multiples of 30 Hz. This LPF is garbage and does a
+    # poor job of attenuating higher frequencies that need to be
+    # rejected. This is the reason why there is aliasing which
+    # causes the "tail" on the epochs.
     if frequency == 30 or frequency == 60 or frequency == 90:
         lpf_upsample_data = upsample_data
     else:
+        lpf_upsample_data = np.zeros(
+            (m, int(n * upsample_factor + 1))
+        )      
         lpf_upsample_data[:, 1:] = (a_fp * up_factor_fp) * (
             upsample_data + np.roll(upsample_data, 1)
         )
