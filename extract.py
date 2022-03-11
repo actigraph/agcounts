@@ -63,7 +63,7 @@ def _factors(frequency: int):
 
 
 def _extract_slow(
-    raw: npt.NDArray[np.float_], frequency: int, lfe_select: bool = False, epoch: int, verbose: bool
+    raw: npt.NDArray[np.float_], frequency: int, lfe_select: bool, epoch: int, verbose: bool
 ):
     """Extract actigraphy counts from one-dimensional accelerometer data.
 
@@ -340,7 +340,7 @@ def _bpf_filter(
     return bpf_data
     
 def _trim_data(
-    bpf_data: npt.NDArray[np.float_], lfe_select: bool = False, verbose: bool
+    bpf_data: npt.NDArray[np.float_], lfe_select: bool, verbose: bool
 ) -> npt.NDArray[np.float64]:
     """Trim/Threshold data.
 
@@ -440,7 +440,7 @@ def _sum_counts(
     return epoch_counts
     
 def _extract(
-    raw: npt.NDArray[np.float_], frequency: int, lfe_select: bool = False, epoch_seconds: int, verbose: bool
+    raw: npt.NDArray[np.float_], frequency: int, lfe_select: bool, epoch_seconds: int, verbose: bool
 ) -> npt.NDArray[np.float64]:
     """Generate counts.
 
