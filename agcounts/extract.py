@@ -372,7 +372,7 @@ def _trim_data(
         mask = (trim_data < 4) & (trim_data >= min_count)
         trim_data[mask] = np.abs(trim_data[mask]) - 1
         trim_data = np.floor(trim_data)
-        mask = []
+        del mask
 
     else:
         min_count = 4
@@ -492,18 +492,20 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
 
     Parameters
     ----------
-    raw : ndarray, shape (n_samples, 3)
-        Raw data matrix, in x, y, z directions for 1st, 2nd, 3rd columns.
+    raw : ndarray, shape (n_samples, ANY)
+        Raw data matrix
     freq : int
         Sampling frequency, has to be 30, 40, 50, 60, 70, 80, 90 or 100 Hz.
     epoch : int
         Epoch length (seconds).
     fast:
         Use fast implementation
+    verbose:
+        Print diagnostic messages
 
     Returns
     -------
-    counts : ndarray, shape (n_epochs, 3)
+    counts : ndarray, shape (n_epochs, ANY)
         The counts, n_epochs = ceil(n_samples/freq).
     """
     assert freq in range(30, 101, 10), "freq must be in [30 : 10 : 100]"
@@ -511,35 +513,11 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
     if fast:
         counts = _extract(raw, freq, False, epoch, verbose > 1).transpose()
     else:
-        x_raw = raw[0 : len(raw), [0]]
-        y_raw = raw[0 : len(raw), [1]]
-        z_raw = raw[0 : len(raw), [2]]
+        axis_counts = []
+        for i in range(raw.shape[1]):
+            print(f"Running extract for axis {i} of {raw.shape[1]}")
+            axis_counts.append(_extract_slow(raw[0:, [i]], freq, False, epoch, verbose))
 
-        if verbose:
-            print("Running extract for x")
-        epoch_counts_x = _extract_slow(x_raw, freq, False, epoch, verbose)
-        if verbose:
-            print("Running extract for y")
-        epoch_counts_y = _extract_slow(y_raw, freq, False, epoch, verbose)
-        if verbose:
-            print("Running extract for z")
-        epoch_counts_z = _extract_slow(z_raw, freq, False, epoch, verbose)
-
-        if verbose:
-            print("Transposing and concatenating")
-        # formatting matrix for output
-        x_counts_transposed = np.transpose(epoch_counts_x)
-        del epoch_counts_x
-        y_counts_transposed = np.transpose(epoch_counts_y)
-        del epoch_counts_y
-        z_counts_transposed = np.transpose(epoch_counts_z)
-        del epoch_counts_z
-
-        counts = np.concatenate(
-            (x_counts_transposed, y_counts_transposed, z_counts_transposed), 1
-        )
-        del x_counts_transposed
-        del y_counts_transposed
-        del z_counts_transposed
+        counts = np.concatenate(axis_counts, 0).transpose()
 
     return counts.astype(int)
