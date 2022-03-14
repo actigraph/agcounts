@@ -174,7 +174,6 @@ def _extract_slow(
         shift_reg_out[0, 0] = zeros_comp - poles_comp
     del down_sample_data
 
-
     bpf_data = (
         (3.0 / 4096.0) / (2.6 / 256.0) * 237.5
     ) * bpf_data  # 17.127404 is used in ActiLife and 17.128125 is used in firmware.
@@ -305,9 +304,7 @@ def _resample(
     return downsample_data
 
 
-def _bpf_filter(
-    downsample_data: npt.NDArray[np.float_], verbose: bool
-) -> Any:
+def _bpf_filter(downsample_data: npt.NDArray[np.float_], verbose: bool) -> Any:
     """Run BPF Filter.
 
     Parameters
