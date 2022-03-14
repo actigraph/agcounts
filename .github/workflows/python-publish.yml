@@ -28,4 +28,4 @@ jobs:
         with:
           poetry-version: 1.1.1
       - name: Build and publish package
-        run: poetry --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
+        run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
