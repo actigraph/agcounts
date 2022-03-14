@@ -1,4 +1,6 @@
 """Function for extracting counts."""
+from typing import Any
+
 import numpy as np
 from numpy import typing as npt
 from scipy import signal
@@ -114,7 +116,7 @@ def _extract_slow(
     l_fp = upsample_factor
 
     if verbose:
-        print("Upsampling data", flush=True)
+        print("Upsampling data")
     if frequency == 30 or frequency == 60 or frequency == 90:
         lpf_upsample_data = upsample_data
     else:
@@ -132,7 +134,7 @@ def _extract_slow(
     # decimal places before input into BPF.
 
     if verbose:
-        print("Downsampling data", flush=True)
+        print("Downsampling data")
     if frequency == 30:
         down_sample_data = raw
     else:
@@ -141,8 +143,8 @@ def _extract_slow(
         )
         for i in range(len(down_sample_data[0])):
             down_sample_data[0, i] = lpf_upsample_data[0, i * downsample_factor]
-    raw = []
-    lpf_upsample_data = []
+    del raw
+    del lpf_upsample_data
 
     down_sample_data = np.round(down_sample_data * 1000) / 1000
 
@@ -152,7 +154,7 @@ def _extract_slow(
     shift_reg_out = np.zeros((1, 9))
 
     if verbose:
-        print("Filtering data", flush=True)
+        print("Filtering data")
     for _ in range(180 * 6):  # charge filter up to steady state
         shift_reg_in[[0], 1:9] = shift_reg_in[[0], 0 : (9 - 1)]
         shift_reg_in[0, 0] = down_sample_data[0, 0]
@@ -170,14 +172,15 @@ def _extract_slow(
         bpf_data[0, j] = zeros_comp - poles_comp
         shift_reg_out[[0], 1:9] = shift_reg_out[[0], 0 : (9 - 1)]
         shift_reg_out[0, 0] = zeros_comp - poles_comp
-    down_sample_data = []
+    del down_sample_data
+
 
     bpf_data = (
         (3.0 / 4096.0) / (2.6 / 256.0) * 237.5
     ) * bpf_data  # 17.127404 is used in ActiLife and 17.128125 is used in firmware.
 
     if verbose:
-        print("Threshold/trimming data", flush=True)
+        print("Threshold/trimming data")
     # then threshold/trim
     trim_data = np.zeros((1, len(bpf_data[0])))
 
@@ -207,8 +210,8 @@ def _extract_slow(
                 trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # floor
 
     if verbose:
-        print("Getting data back to 10Hz for accumulation", flush=True)
-    bpf_data = []
+        print("Getting data back to 10Hz for accumulation")
+    del bpf_data
     # hackish downsample to 10 Hz
     down_sample10_hz = np.zeros((1, int(len(trim_data[0]) / 3)))
 
@@ -216,25 +219,24 @@ def _extract_slow(
         down_sample10_hz[0, y - 1] = np.floor(
             np.nanmean(trim_data[0, ((y - 1) * 3) : ((y - 1) * 3 + 3)])
         )  # floor
-
-    trim_data = []
+    del trim_data
 
     # Accumulator for epoch
     block_size = epoch * 10
     epoch_counts = np.zeros((1, int((len(down_sample10_hz[0]) / block_size))))
 
     if verbose:
-        print("Summing epochs", flush=True)
+        print("Summing epochs")
     for i in range(len(epoch_counts[0])):
         epoch_counts[0, i] = np.floor(
             sum(down_sample10_hz[0, i * block_size : i * block_size + block_size])
         )
-    down_sample10_hz = []
+    del down_sample10_hz
     return epoch_counts
 
 
 def _resample(
-    raw: npt.NDArray[np.float_], frequency: int, epoch_seconds: int, verbose: bool
+    raw: npt.NDArray[np.float_], frequency: int, verbose: bool
 ) -> npt.NDArray[np.float64]:
     """Resample the data.
 
@@ -244,9 +246,6 @@ def _resample(
         Matrix containing raw data
     frequency:
         sample frequency of raw data (Hz)
-    epoch_seconds:
-        Used to compute how many raw samples are used for
-        computing an epoch
     verbose:
         Print diagnostic messages
 
@@ -270,7 +269,7 @@ def _resample(
 
     # raw doesn't need to be used after this
     if frequency != 30:
-        raw = []
+        del raw
 
     # Allocate memory and then LPF.  LPF is only done at non
     # integer multiples of 30 Hz. This LPF is garbage and does a
@@ -286,7 +285,7 @@ def _resample(
         )
         for i in range(1, len(lpf_upsample_data[0])):
             lpf_upsample_data[:, i] += -b_fp * lpf_upsample_data[:, i - 1]
-    upsample_data = []
+    del upsample_data
 
     if frequency not in [30, 60, 90]:
         lpf_upsample_data = lpf_upsample_data[:, 1:]
@@ -295,19 +294,20 @@ def _resample(
     # data is rounded to 3 decimal places before input into BPF.
     if frequency == 30:
         downsample_data = raw
+        del raw
     else:
         downsample_data = lpf_upsample_data[:, ::downsample_factor]
-    raw = []
-    lpf_upsample_data = []
+
+    del lpf_upsample_data
     if verbose:
-        print("Created downsample_data", flush=True)
+        print("Created downsample_data")
     downsample_data = np.round(downsample_data * 1000) / 1000
     return downsample_data
 
 
 def _bpf_filter(
     downsample_data: npt.NDArray[np.float_], verbose: bool
-) -> npt.NDArray[np.float64]:
+) -> Any:
     """Run BPF Filter.
 
     Parameters
@@ -326,7 +326,7 @@ def _bpf_filter(
         (1, -1)
     )
     if verbose:
-        print("Filtering Data", flush=True)
+        print("Filtering Data")
     bpf_data, _ = signal.lfilter(
         INPUT_COEFFICIENTS[0, :],
         OUTPUT_COEFFICIENTS[0, :],
@@ -334,7 +334,8 @@ def _bpf_filter(
         zi=zi.repeat(downsample_data.shape[0], axis=0)
         * downsample_data[:, 0].reshape((-1, 1)),
     )
-    downsample_data = []
+
+    del downsample_data
 
     bpf_data = ((3.0 / 4096.0) / (2.6 / 256.0) * 237.5) * bpf_data
     # 17.127404 is used in ActiLife and 17.128125 is used in
@@ -344,7 +345,7 @@ def _bpf_filter(
 
 def _trim_data(
     bpf_data: npt.NDArray[np.float_], lfe_select: bool, verbose: bool
-) -> npt.NDArray[np.float64]:
+) -> Any:
     """Trim/Threshold data.
 
     Parameters
@@ -363,7 +364,7 @@ def _trim_data(
     """
     # then threshold/trim
     if verbose:
-        print("Trimming Data", flush=True)
+        print("Trimming Data")
     if lfe_select:
         min_count = 1
         max_count = 128 * 1
@@ -404,7 +405,7 @@ def _resample_10hz(
         The resampled_data
     """
     if verbose:
-        print("Getting data back to 10Hz for accumulation", flush=True)
+        print("Getting data back to 10Hz for accumulation")
     # hackish downsample to 10 Hz
     downsample_10hz = np.cumsum(trim_data, axis=-1, dtype=float)
     downsample_10hz[:, 3:] = downsample_10hz[:, 3:] - downsample_10hz[:, :-3]
@@ -433,11 +434,11 @@ def _sum_counts(
         The epochs
     """
     if verbose:
-        print("Summing epochs", flush=True)
+        print("Summing epochs")
     # Accumulator for epoch
     block_size = epoch_seconds * 10
     epoch_counts = np.cumsum(downsample_10hz, axis=-1, dtype=float)
-    downsample_10hz = []
+
     epoch_counts[:, block_size:] = (
         epoch_counts[:, block_size:] - epoch_counts[:, :-block_size]
     )
@@ -473,24 +474,22 @@ def _extract(
     epochs :
         The epochs
     """
-    downsample_data = _resample(
-        raw=raw, frequency=frequency, epoch_seconds=epoch_seconds, verbose=verbose
-    )
-    raw = []
+    downsample_data = _resample(raw=raw, frequency=frequency, verbose=verbose)
+    del raw
     bpf_data = _bpf_filter(downsample_data=downsample_data, verbose=verbose)
-    downsample_data = []
+    del downsample_data
     trim_data = _trim_data(bpf_data=bpf_data, lfe_select=lfe_select, verbose=verbose)
-    bpf_data = []
-
+    del bpf_data
     downsample_10hz = _resample_10hz(trim_data=trim_data, verbose=verbose)
-    trim_data = []
+    del trim_data
+
     epoch_counts = _sum_counts(
         downsample_10hz=downsample_10hz, epoch_seconds=epoch_seconds, verbose=verbose
     )
     return epoch_counts
 
 
-def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: int = 1):
+def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = False):
     """
     Generate counts from raw data.
 
@@ -518,32 +517,32 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: int = 1):
         x_raw = raw[0 : len(raw), [0]]
         y_raw = raw[0 : len(raw), [1]]
         z_raw = raw[0 : len(raw), [2]]
-        raw = []
-        if verbose > 0:
-            print("Running extract for x", flush=True)
-        epoch_counts_x = _extract_slow(x_raw, freq, False, epoch, verbose > 1)
-        if verbose > 0:
-            print("Running extract for y", flush=True)
-        epoch_counts_y = _extract_slow(y_raw, freq, False, epoch, verbose > 1)
-        if verbose > 0:
-            print("Running extract for z", flush=True)
-        epoch_counts_z = _extract_slow(z_raw, freq, False, epoch, verbose > 1)
 
-        if verbose > 0:
-            print("Transposing and concatenating", flush=True)
+        if verbose:
+            print("Running extract for x")
+        epoch_counts_x = _extract_slow(x_raw, freq, False, epoch, verbose)
+        if verbose:
+            print("Running extract for y")
+        epoch_counts_y = _extract_slow(y_raw, freq, False, epoch, verbose)
+        if verbose:
+            print("Running extract for z")
+        epoch_counts_z = _extract_slow(z_raw, freq, False, epoch, verbose)
+
+        if verbose:
+            print("Transposing and concatenating")
         # formatting matrix for output
         x_counts_transposed = np.transpose(epoch_counts_x)
-        epoch_counts_x = []
+        del epoch_counts_x
         y_counts_transposed = np.transpose(epoch_counts_y)
-        epoch_counts_y = []
+        del epoch_counts_y
         z_counts_transposed = np.transpose(epoch_counts_z)
-        epoch_counts_z = []
+        del epoch_counts_z
 
         counts = np.concatenate(
             (x_counts_transposed, y_counts_transposed, z_counts_transposed), 1
         )
-        x_counts_transposed = []
-        y_counts_transposed = []
-        z_counts_transposed = []
+        del x_counts_transposed
+        del y_counts_transposed
+        del z_counts_transposed
 
     return counts.astype(int)
