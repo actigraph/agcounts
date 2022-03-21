@@ -105,7 +105,6 @@ def _extract_slow(
     # need to be rejected.  This is the reason why there is aliasing which causes the
     # "tail" on the epochs.
 
-    lpf_upsample_data = np.zeros((1, len(upsample_data[0])))
     if frequency not in [30, 60, 90]:
         lpf_upsample_data = np.zeros((1, int(len(raw[0]) * upsample_factor + 1)))
 
@@ -142,6 +141,9 @@ def _extract_slow(
     if frequency == 30:
         down_sample_data = raw
     else:
+        down_sample_data = np.zeros(
+            (1, int(np.floor(len(raw[0]) * upsample_factor / downsample_factor)))
+        )
         for i in range(len(down_sample_data[0])):
             down_sample_data[0, i] = lpf_upsample_data[0, i * downsample_factor]
     del raw
