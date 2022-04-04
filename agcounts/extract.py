@@ -129,13 +129,8 @@ def _extract_slow(
     if frequency not in [30, 60, 90]:
         lpf_upsample_data = lpf_upsample_data[:, 1:]
 
-    # Then allocate memory and downsample by factor M.  Downsampled data is rounded to 3
-    # decimal places before input into BPF.
-
-    down_sample_data = np.zeros(
-        (1, int(np.floor(len(raw[0]) * upsample_factor / downsample_factor)))
-    )
-
+    # Then downsample by factor M.  Downsampled data is rounded to 3 decimal places
+    # before input into BPF.
     if verbose:
         print("Downsampling data")
     if frequency == 30:
