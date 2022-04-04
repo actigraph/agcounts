@@ -146,7 +146,7 @@ def _extract_slow(
 
     down_sample_data = np.round(down_sample_data * 1000) / 1000
 
-    bpf_data = np.zeros((1, len(down_sample_data[0])))
+    bpf_data: npt.NDArray[np.float_] = np.zeros((1, len(down_sample_data[0])))
 
     shift_reg_in = np.zeros((1, 9))
     shift_reg_out = np.zeros((1, 9))
