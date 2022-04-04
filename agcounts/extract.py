@@ -178,33 +178,34 @@ def _extract_slow(
 
     if verbose:
         print("Threshold/trimming data")
+
     # then threshold/trim
-    trim_data = np.zeros((1, len(bpf_data[0])))
+    trim_data = np.zeros((1, len(bpf_data[0])))  # type: ignore
 
     if lfe_select:
         min_count = 1
         max_count = 128 * 1
 
-        for i in range(len(bpf_data[0])):
-            if abs(bpf_data[0, i]) > max_count:
+        for i in range(len(bpf_data[0])):  # type: ignore
+            if abs(bpf_data[0, i]) > max_count:  # type: ignore
                 trim_data[0, i] = max_count
-            elif abs(bpf_data[0, i]) < min_count:
+            elif abs(bpf_data[0, i]) < min_count:  # type: ignore
                 trim_data[0, i] = 0
-            elif abs(bpf_data[0, i]) < 4:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i])) - 1
+            elif abs(bpf_data[0, i]) < 4:  # type: ignore
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i])) - 1  # type: ignore
             else:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # floor
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # type: ignore
     else:
         min_count = 4
         max_count = 128
 
-        for i in range(len(bpf_data[0])):
-            if abs(bpf_data[0, i]) > max_count:
+        for i in range(len(bpf_data[0])):  # type: ignore
+            if abs(bpf_data[0, i]) > max_count:  # type: ignore
                 trim_data[0, i] = max_count
-            elif abs(bpf_data[0, i]) < min_count:
+            elif abs(bpf_data[0, i]) < min_count:  # type: ignore
                 trim_data[0, i] = 0
             else:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # floor
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # type: ignore
 
     if verbose:
         print("Getting data back to 10Hz for accumulation")
