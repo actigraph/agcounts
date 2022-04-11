@@ -1,0 +1,36 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+strategy:
+  matrix:
+    Python37:
+      python.version: '3.7'
+    Python38:
+      python.version: '3.8'
+    Python39:
+      python.version: '3.9'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+  displayName: 'Use Python $(python.version)'
+
+- script: |
+    python -m pip install --upgrade pip poetry keyring artifacts-keyring
+  displayName: 'Install package and tools'
+
+- script: |
+    poetry install
+  condition: always()
+
+- script: |
+    poetry run make lint
+  displayName: 'Check for style'
+
+- script: |
+    poetry run make test
+  displayName: 'Run regression tests'

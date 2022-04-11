@@ -3,9 +3,18 @@
 
 A python package for extracting actigraphy counts from accelerometer data. 
 
+## Install
+```bash
+pip install agcounts
+```
+## Test
+Download test data:
 ```bash
 curl -L https://github.com/actigraph/agcounts/files/8247896/GT3XPLUS-AccelerationCalibrated-1x8x0.NEO1G75911139.2000-01-06-13-00-00-000-P0000.sensor.csv.gz --output data.csv.gz
 ```
+
+Run a simple test
+
 ```python
 import pandas as pd
 import numpy as np

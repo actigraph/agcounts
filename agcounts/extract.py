@@ -105,7 +105,6 @@ def _extract_slow(
     # need to be rejected.  This is the reason why there is aliasing which causes the
     # "tail" on the epochs.
 
-    # lpf_upsample_data = np.zeros((1, len(upsample_data[0])))
     if frequency not in [30, 60, 90]:
         lpf_upsample_data = np.zeros((1, int(len(raw[0]) * upsample_factor + 1)))
 
@@ -130,9 +129,8 @@ def _extract_slow(
     if frequency not in [30, 60, 90]:
         lpf_upsample_data = lpf_upsample_data[:, 1:]
 
-    # Then allocate memory and downsample by factor M.  Downsampled data is rounded to 3
-    # decimal places before input into BPF.
-
+    # Then downsample by factor M.  Downsampled data is rounded to 3 decimal places
+    # before input into BPF.
     if verbose:
         print("Downsampling data")
     if frequency == 30:
@@ -148,7 +146,7 @@ def _extract_slow(
 
     down_sample_data = np.round(down_sample_data * 1000) / 1000
 
-    bpf_data = np.zeros((1, len(down_sample_data[0])))
+    bpf_data: npt.NDArray[np.float_] = np.zeros((1, len(down_sample_data[0])))
 
     shift_reg_in = np.zeros((1, 9))
     shift_reg_out = np.zeros((1, 9))
@@ -180,33 +178,34 @@ def _extract_slow(
 
     if verbose:
         print("Threshold/trimming data")
+
     # then threshold/trim
-    trim_data = np.zeros((1, len(bpf_data[0])))
+    trim_data = np.zeros((1, len(bpf_data[0])))  # type: ignore
 
     if lfe_select:
         min_count = 1
         max_count = 128 * 1
 
-        for i in range(len(bpf_data[0])):
-            if abs(bpf_data[0, i]) > max_count:
+        for i in range(len(bpf_data[0])):  # type: ignore
+            if abs(bpf_data[0, i]) > max_count:  # type: ignore
                 trim_data[0, i] = max_count
-            elif abs(bpf_data[0, i]) < min_count:
+            elif abs(bpf_data[0, i]) < min_count:  # type: ignore
                 trim_data[0, i] = 0
-            elif abs(bpf_data[0, i]) < 4:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i])) - 1
+            elif abs(bpf_data[0, i]) < 4:  # type: ignore
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i])) - 1  # type: ignore
             else:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # floor
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # type: ignore
     else:
         min_count = 4
         max_count = 128
 
-        for i in range(len(bpf_data[0])):
-            if abs(bpf_data[0, i]) > max_count:
+        for i in range(len(bpf_data[0])):  # type: ignore
+            if abs(bpf_data[0, i]) > max_count:  # type: ignore
                 trim_data[0, i] = max_count
-            elif abs(bpf_data[0, i]) < min_count:
+            elif abs(bpf_data[0, i]) < min_count:  # type: ignore
                 trim_data[0, i] = 0
             else:
-                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # floor
+                trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # type: ignore
 
     if verbose:
         print("Getting data back to 10Hz for accumulation")
