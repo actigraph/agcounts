@@ -218,7 +218,6 @@ def _extract_slow(
             np.nanmean(trim_data[0, ((y - 1) * 3) : ((y - 1) * 3 + 3)])
         )  # floor
     del trim_data
-
     # Accumulator for epoch
     block_size = epoch * 10
     epoch_counts = np.zeros((1, int((len(down_sample10_hz[0]) / block_size))))
