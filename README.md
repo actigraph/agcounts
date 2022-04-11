@@ -40,7 +40,7 @@ def get_counts_csv(file, freq: int, epoch: int, fast: bool = True, verbose: bool
   counts = get_counts(raw, freq = freq, epoch = epoch, fast = fast, verbose = verbose)
   del raw
   counts = pd.DataFrame(counts, columns = ["X","Y","Z"])
-  counts["AC"] = (counts["X"]^2 + counts["Y"]^2 + counts["Z"]^2) ** 0.5
+  counts["AC"] = (1/3 * (counts["X"]^2 + counts["Y"]^2 + counts["Z"]^2)) ** 0.5
   ts = ts[0:counts.shape[0]]
   if time_column is not None:
     counts = pd.concat([ts, counts], axis=1)
