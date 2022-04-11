@@ -27,7 +27,7 @@ def get_counts_csv(file, freq: int, epoch: int, fast: bool = True, verbose: bool
   if time_column is not None:
     ts = raw[time_column]
     ts = pd.to_datetime(ts)
-    time_freq = str(epoch) + 'S'
+    time_freq = str(epoch) + "S"
     ts = ts.dt.round(time_freq)
     ts = ts.unique()
     ts = pd.DataFrame(ts, columns=[time_column])
@@ -39,7 +39,8 @@ def get_counts_csv(file, freq: int, epoch: int, fast: bool = True, verbose: bool
     print("Getting Counts", flush = True)    
   counts = get_counts(raw, freq = freq, epoch = epoch, fast = fast, verbose = verbose)
   del raw
-  counts = pd.DataFrame(counts, columns = ['X','Y','Z'])
+  counts = pd.DataFrame(counts, columns = ["X","Y","Z"])
+  counts["AC"] = (counts["X"]^2 + counts["Y"]^2 + counts["Z"]^2) ** 0.5
   ts = ts[0:counts.shape[0]]
   if time_column is not None:
     counts = pd.concat([ts, counts], axis=1)
