@@ -285,16 +285,17 @@ def _resample(
     if frequency == 30 or frequency == 60 or frequency == 90:
         print("lpf_data not needed", flush = True)
     else:
+        upsample_data = (a_fp * up_factor_fp) * (
+          upsample_data + np.roll(upsample_data, 1)
+        )
         z = np.zeros(upsample_data.shape[0])
         upsample_data = np.column_stack((z, upsample_data))
-        upsample_roll = np.roll(upsample_data, 1)
-        upsample_data = (a_fp * up_factor_fp) * (upsample_data + upsample_roll)
-        
-        upsample_roll = np.roll(upsample_data, 1)
-        upsample_data = upsample_data - b_fp * upsample_roll
-        upsample_data = upsample_data[:, 1:]
-        del upsample_roll
         del z
+  
+        for i in range(1, len(upsample_data[0])):
+           upsample_data[:, i] += -b_fp * upsample_data[:, i - 1]
+        # remove the zeros
+        upsample_data = upsample_data[:, 1:]      
     gc.collect()
 
     # Then allocate memory and downsample by factor M. Downsampled
