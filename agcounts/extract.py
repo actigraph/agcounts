@@ -284,16 +284,16 @@ def _resample(
     # causes the "tail" on the epochs.
     if frequency not in [30, 60, 90]:
         upsample_data = (a_fp * up_factor_fp) * (
-          upsample_data + np.roll(upsample_data, 1)
+            upsample_data + np.roll(upsample_data, 1)
         )
         z = np.zeros(upsample_data.shape[0])
         upsample_data = np.column_stack((z, upsample_data))
         del z
-  
+
         for i in range(1, len(upsample_data[0])):
-           upsample_data[:, i] += -b_fp * upsample_data[:, i - 1]
+            upsample_data[:, i] += -b_fp * upsample_data[:, i - 1]
         # remove the zeros
-        upsample_data = upsample_data[:, 1:]      
+        upsample_data = upsample_data[:, 1:]
 
     # Then allocate memory and downsample by factor M. Downsampled
     # data is rounded to 3 decimal places before input into BPF.
