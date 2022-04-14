@@ -282,9 +282,7 @@ def _resample(
     # poor job of attenuating higher frequencies that need to be
     # rejected. This is the reason why there is aliasing which
     # causes the "tail" on the epochs.
-    if frequency == 30 or frequency == 60 or frequency == 90:
-        print("lpf_data not needed", flush = True)
-    else:
+    if frequency not in [30, 60, 90]:
         upsample_data = (a_fp * up_factor_fp) * (
           upsample_data + np.roll(upsample_data, 1)
         )
