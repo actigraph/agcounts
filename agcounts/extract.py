@@ -294,7 +294,6 @@ def _resample(
            upsample_data[:, i] += -b_fp * upsample_data[:, i - 1]
         # remove the zeros
         upsample_data = upsample_data[:, 1:]      
-    gc.collect()
 
     # Then allocate memory and downsample by factor M. Downsampled
     # data is rounded to 3 decimal places before input into BPF.
