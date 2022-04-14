@@ -301,9 +301,9 @@ def _resample(
     if frequency == 30:
         downsample_data = raw
         del raw
+        gc.collect()
     else:
         downsample_data = upsample_data[:, ::downsample_factor]
-    gc.collect()
 
     del upsample_data
     gc.collect()
