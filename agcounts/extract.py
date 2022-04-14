@@ -283,6 +283,7 @@ def _resample(
     # rejected. This is the reason why there is aliasing which
     # causes the "tail" on the epochs.
     if frequency == 30 or frequency == 60 or frequency == 90:
+        print("lpf_data not needed", flush = True)
     else:
         z = np.zeros(upsample_data.shape[0])
         upsample_data = np.column_stack((z, upsample_data))
