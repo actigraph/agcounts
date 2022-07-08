@@ -50,3 +50,33 @@ def al_counts(request):
     )
     counts = counts[["Axis2", "Axis1", "Axis3"]].to_numpy()
     return counts
+
+
+@pytest.fixture
+def input_32hz():
+    df = pd.read_csv(data_path / "32Hz_input.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def upsample_256():
+    df = pd.read_csv(data_path / "upsample256.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def upsample_256_lpf():
+    df = pd.read_csv(data_path / "upsample256Lpf.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def taso_256_lpf():
+    df = pd.read_csv(data_path / "taso256HzLpf.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def output_30hz():
+    df = pd.read_csv(data_path / "30Hz_output.csv", header=None)
+    return df.values
