@@ -4,6 +4,6 @@
 *.pyc
 *.png
 poetry.lock
-data
+.ipynb_checkpoints
 *back
 dist

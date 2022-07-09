@@ -16,7 +16,7 @@ al_data_path = data_path / "ActiLifeCounts"
 def agcounts_serial(request):
     epoch, freq = request.param
     signals = pd.read_csv(
-        raw_data_path / f"raw_{epoch}_{freq}.csv", skiprows=0, header=None
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
     counts = get_counts(np.array(signals), freq=freq, epoch=epoch, fast=False)
     return counts
@@ -26,7 +26,7 @@ def agcounts_serial(request):
 def agcounts(request):
     epoch, freq = request.param
     signals = pd.read_csv(
-        raw_data_path / f"raw_{epoch}_{freq}.csv", skiprows=0, header=None
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
     counts = get_counts(np.array(signals), freq=freq, epoch=epoch, fast=True)
     return counts
