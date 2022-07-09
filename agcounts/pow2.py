@@ -1,5 +1,4 @@
 """Functions for dealing with pow2 sample rates."""
-import math
 
 import numpy as np
 
@@ -97,7 +96,7 @@ def taso_lpf(data):
 def interpolated_resample(data):
     """Then we do a linear interpolation to get 256 Hz to 30 Hz."""
     m, n = data.shape
-    out = np.zeros((data.shape[0] * 30 // 256, n))
+    out = np.zeros_l((m * 30 // 256, n))
 
     i_s = np.ones((out.shape[0], n)).cumsum(axis=0)
     indexes = np.array(np.floor((256 / 30) * i_s) - 1, dtype=int)[:-1]
