@@ -6,11 +6,11 @@ import numpy as np
 from numpy import typing as npt
 from scipy import signal
 
+from agcounts.pow2 import resample_to_30hz
+
 # BPF. There are extraneous coefficients as to match constants
 # in ActiLife.
 # Input data coefficients.
-from agcounts.pow2 import resample_to_30hz
-
 INPUT_COEFFICIENTS: npt.NDArray[np.float_] = np.array(
     [
         [
