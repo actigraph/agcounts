@@ -96,11 +96,11 @@ def taso_lpf(data):
 def interpolated_resample(data):
     """Then we do a linear interpolation to get 256 Hz to 30 Hz."""
     m, n = data.shape
-    out = np.zeros_l((m * 30 // 256, n))
+    out = np.zeros((m * 30 // 256, n))
 
     i_s = np.ones((out.shape[0], n)).cumsum(axis=0)
-    indexes = np.array(np.floor((256 / 30) * i_s) - 1, dtype=int)[:-1]
-    diffs = np.diff(data, axis=0, prepend=0)[indexes.flatten() + 1, :]
-    b_s = data[indexes.flatten(), :] - (diffs * (indexes + 1))
+    indexes = (np.floor((256 / 30) * i_s) - 1)[:-1, :].astype(int)
+    diffs = np.diff(data, axis=0, prepend=0)[indexes[:, 0] + 1, :]
+    b_s = data[indexes[:, 0], :] - (diffs * (indexes + 1))
     out[:-1, :] = ((256/30) * i_s[:-1, :]) * diffs + b_s
     return out
