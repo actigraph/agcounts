@@ -16,7 +16,7 @@ al_data_path = data_path / "ActiLifeCounts"
 def agcounts_serial(request):
     epoch, freq = request.param
     signals = pd.read_csv(
-        raw_data_path / f"raw_{epoch}_{freq}.csv", skiprows=0, header=None
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
     counts = get_counts(np.array(signals), freq=freq, epoch=epoch, fast=False)
     return counts
@@ -26,7 +26,7 @@ def agcounts_serial(request):
 def agcounts(request):
     epoch, freq = request.param
     signals = pd.read_csv(
-        raw_data_path / f"raw_{epoch}_{freq}.csv", skiprows=0, header=None
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
     counts = get_counts(np.array(signals), freq=freq, epoch=epoch, fast=True)
     return counts
@@ -50,3 +50,33 @@ def al_counts(request):
     )
     counts = counts[["Axis2", "Axis1", "Axis3"]].to_numpy()
     return counts
+
+
+@pytest.fixture
+def input_32hz():
+    df = pd.read_csv(data_path / "32Hz_input.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def upsample_256():
+    df = pd.read_csv(data_path / "upsample256.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def upsample_256_lpf():
+    df = pd.read_csv(data_path / "upsample256Lpf.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def taso_256_lpf():
+    df = pd.read_csv(data_path / "taso256HzLpf.csv", header=None)
+    return df.values
+
+
+@pytest.fixture
+def output_30hz():
+    df = pd.read_csv(data_path / "30Hz_output.csv", header=None)
+    return df.values

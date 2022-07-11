@@ -1,10 +1,12 @@
 """Function for extracting counts."""
+import gc
 from typing import Any
 
 import numpy as np
 from numpy import typing as npt
 from scipy import signal
-import gc
+
+from agcounts.pow2 import resample_to_30hz
 
 # BPF. There are extraneous coefficients as to match constants
 # in ActiLife.
@@ -515,7 +517,13 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
     counts : ndarray, shape (n_epochs, ANY)
         The counts, n_epochs = ceil(n_samples/freq).
     """
-    assert freq in range(30, 101, 10), "freq must be in [30 : 10 : 100]"
+    if freq in [32, 64, 128, 256]:
+        raw = resample_to_30hz(raw, freq)
+        freq = 30
+    else:
+        assert freq in range(30, 101, 10), (
+            "freq must be in [30 : 10 : 100]," "or a power of 2 between 32 and 256."
+        )
 
     if fast:
         counts = _extract(raw, freq, False, epoch, verbose > 1).transpose()
