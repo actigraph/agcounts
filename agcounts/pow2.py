@@ -1,6 +1,7 @@
 """Functions for dealing with pow2 sample rates."""
 
 import numpy as np
+from scipy.signal import lfilter, lfilter_zi
 
 
 def resample_to_30hz(data, sample_rate):
@@ -74,23 +75,19 @@ def upsample_to_256hz(data, sample_rate):
 
 
 def taso_lpf(data):
-    """Now at 256 Hz, we apply a single pole lowpass IIR filter."""
+    """Now at 256 Hz, we apply a single pole low-pass IIR filter."""
     b = 0.307990357416655  # = 1 - decay
+    a = 1 - b
+    input_coefficients = [a]
+    output_coefficients = [1, -a]
+    x = b * data / a
 
-    out = np.zeros_like(data)
-    y = data[0, :] * 0
-    x = b * data
+    zi = (lfilter_zi(input_coefficients, output_coefficients)).reshape((1, -1))
+    filtered, _ = lfilter(
+        input_coefficients, output_coefficients, x, zi=zi * x[0, :], axis=0
+    )
 
-    # Transient step response.
-    for i in range(180):
-        y += x[0, :] - b * y
-
-    # Filtering
-    for i in range(data.shape[0]):
-        y += x[i, :] - b * y
-        out[i, :] = y
-
-    return out
+    return filtered
 
 
 def interpolated_resample(data):
@@ -102,5 +99,5 @@ def interpolated_resample(data):
     indexes = (np.floor((256 / 30) * i_s) - 1)[:-1, :].astype(int)
     diffs = np.diff(data, axis=0, prepend=0)[indexes[:, 0] + 1, :]
     b_s = data[indexes[:, 0], :] - (diffs * (indexes + 1))
-    out[:-1, :] = ((256/30) * i_s[:-1, :]) * diffs + b_s
+    out[:-1, :] = ((256 / 30) * i_s[:-1, :]) * diffs + b_s
     return out
