@@ -6,6 +6,21 @@ import pytest
 
 from agcounts.extract import get_counts
 
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runslow", action="store_true", default=False, help="run slow tests"
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    skip_slow = pytest.mark.skip(reason="need --runslow option to run")
+    if not config.getoption("--runslow"):
+        for item in items:
+            if "slow" in item.keywords:
+                item.add_marker(skip_slow)
+
+
 data_path = Path("./data")
 raw_data_path = data_path / "raw"
 cp_data_path = data_path / "CentrePointCounts"

@@ -11,6 +11,7 @@ import pytest
     ],
     indirect=True,
 )
+@pytest.mark.slow
 def test_counts_fast_and_slow(agcounts, agcounts_serial):
     assert (agcounts_serial == agcounts).all()
 
