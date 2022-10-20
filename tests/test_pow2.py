@@ -15,7 +15,7 @@ def test_upsample_256_lpf(input_32hz, upsample_256_lpf):
 
 
 def test_taso_256_lpf(upsample_256_lpf, taso_256_lpf):
-    filtered = taso_lpf(upsample_256_lpf)
+    filtered, _ = taso_lpf(upsample_256_lpf)
     assert np.abs(filtered - taso_256_lpf).max() == pytest.approx(0)
 
 
@@ -25,5 +25,5 @@ def test_interpolated(taso_256_lpf, output_30hz):
 
 
 def test_32hz(input_32hz, output_30hz):
-    resampled = resample_to_30hz(input_32hz, 32)
+    resampled, _ = resample_to_30hz(input_32hz, 32)
     assert np.abs(resampled - output_30hz).max() == pytest.approx(0)

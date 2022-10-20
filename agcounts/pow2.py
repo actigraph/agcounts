@@ -1,19 +1,25 @@
 """Functions for dealing with pow2 sample rates."""
+from typing import Optional
 
 import numpy as np
+from numpy import typing as npt
 from scipy.signal import lfilter, lfilter_zi
 
 
-def resample_to_30hz(data, sample_rate):
+def resample_to_30hz(
+    data: npt.NDArray[np.float_],
+    sample_rate: int,
+    initial_conditions: Optional[npt.NDArray[np.float_]] = None,
+):
     """Resample data to 30Hz."""
     data = upsample_to_256hz(data, sample_rate)
-    data = taso_lpf(data)
+    data, new_conditions = taso_lpf(data, initial_conditions)
     data = interpolated_resample(data)
 
-    return data
+    return data, new_conditions
 
 
-def upsample_to_256hz(data, sample_rate):
+def upsample_to_256hz(data: npt.NDArray[np.float_], sample_rate: int):
     """Upsample data to 256Hz."""
     if sample_rate == 256:
         return data
@@ -74,23 +80,28 @@ def upsample_to_256hz(data, sample_rate):
     return out
 
 
-def taso_lpf(data):
+def taso_lpf(
+    data: npt.NDArray[np.float_],
+    initial_conditions: Optional[npt.NDArray[np.float_]] = None,
+):
     """Now at 256 Hz, we apply a single pole low-pass IIR filter."""
     b = 0.307990357416655  # = 1 - decay
     a = 1 - b
     input_coefficients = [a]
     output_coefficients = [1, -a]
     x = b * data / a
-
-    zi = (lfilter_zi(input_coefficients, output_coefficients)).reshape((1, -1))
-    filtered, _ = lfilter(
+    if initial_conditions is not None:
+        zi = initial_conditions
+    else:
+        zi = (lfilter_zi(input_coefficients, output_coefficients)).reshape((1, -1))
+    filtered, new_conditions = lfilter(
         input_coefficients, output_coefficients, x, zi=zi * x[0, :], axis=0
     )
 
-    return filtered
+    return filtered, new_conditions
 
 
-def interpolated_resample(data):
+def interpolated_resample(data: npt.NDArray[np.float_]):
     """Then we do a linear interpolation to get 256 Hz to 30 Hz."""
     m, n = data.shape
     out = np.zeros((m * 30 // 256, n))
