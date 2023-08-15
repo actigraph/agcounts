@@ -1,14 +1,37 @@
 """Functions for dealing with pow2 sample rates."""
 
+import logging
+
 import numpy as np
 from scipy.signal import lfilter, lfilter_zi
 
+try:
+    from mne import filter
+except ImportError:
+    filter = None
 
-def resample_to_30hz(data, sample_rate):
+logger = logging.getLogger(__name__)
+
+
+def resample_to_30hz(data, sample_rate, interpolate: bool = False):
     """Resample data to 30Hz."""
-    data = upsample_to_256hz(data, sample_rate)
-    data = taso_lpf(data)
-    data = interpolated_resample(data)
+    if interpolate:
+        if filter is None:
+            logger.error("Interpolating needs MNE. Please install MNE.")
+            raise ImportError("mne")
+        filtered = filter.filter_data(
+            data,
+            sfreq=sample_rate,
+            l_freq=None,
+            h_freq=15,
+            verbose=30,
+        )
+        data = filter.resample(filtered, down=sample_rate / 30)
+        del filtered
+    else:
+        data = upsample_to_256hz(data, sample_rate)
+        data = taso_lpf(data)
+        data = interpolated_resample(data)
 
     return data
 

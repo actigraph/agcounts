@@ -1,5 +1,6 @@
 """Function for extracting counts."""
 import gc
+import logging
 from typing import Any
 
 import numpy as np
@@ -7,6 +8,8 @@ from numpy import typing as npt
 from scipy import signal
 
 from agcounts.pow2 import resample_to_30hz
+
+logger = logging.getLogger(__name__)
 
 # BPF. There are extraneous coefficients as to match constants
 # in ActiLife.
@@ -72,7 +75,6 @@ def _extract_slow(
     frequency: int,
     lfe_select: bool,
     epoch: int,
-    verbose: bool,
 ):
     """Extract actigraphy counts from one-dimensional accelerometer data.
 
@@ -117,8 +119,7 @@ def _extract_slow(
     b_fp = (pi - 2 * upsample_factor) / (pi + 2 * upsample_factor)
     l_fp = upsample_factor
 
-    if verbose:
-        print("Upsampling data")
+    logger.info("Upsampling data")
     if frequency == 30 or frequency == 60 or frequency == 90:
         lpf_upsample_data = upsample_data
     else:
@@ -134,8 +135,7 @@ def _extract_slow(
 
     # Then downsample by factor M.  Downsampled data is rounded to 3 decimal places
     # before input into BPF.
-    if verbose:
-        print("Downsampling data")
+    logger.info("Downsampling data")
     if frequency == 30:
         down_sample_data = raw
     else:
@@ -155,8 +155,7 @@ def _extract_slow(
     shift_reg_in = np.zeros((1, 9))
     shift_reg_out = np.zeros((1, 9))
 
-    if verbose:
-        print("Filtering data")
+    logger.info("Filtering data")
     for _ in range(180 * 6):  # charge filter up to steady state
         shift_reg_in[[0], 1:9] = shift_reg_in[[0], 0 : (9 - 1)]
         shift_reg_in[0, 0] = down_sample_data[0, 0]
@@ -181,8 +180,7 @@ def _extract_slow(
         (3.0 / 4096.0) / (2.6 / 256.0) * 237.5
     ) * bpf_data  # 17.127404 is used in ActiLife and 17.128125 is used in firmware.
 
-    if verbose:
-        print("Threshold/trimming data")
+    logger.info("Threshold/trimming data")
 
     # then threshold/trim
     trim_data = np.zeros((1, len(bpf_data[0])))  # type: ignore
@@ -212,8 +210,7 @@ def _extract_slow(
             else:
                 trim_data[0, i] = np.floor(abs(bpf_data[0, i]))  # type: ignore
 
-    if verbose:
-        print("Getting data back to 10Hz for accumulation")
+    logger.info("Getting data back to 10Hz for accumulation")
     del bpf_data
     # hackish downsample to 10 Hz
     down_sample10_hz = np.zeros((1, int(len(trim_data[0]) / 3)))
@@ -229,8 +226,7 @@ def _extract_slow(
     block_size = epoch * 10
     epoch_counts = np.zeros((1, int((len(down_sample10_hz[0]) / block_size))))
 
-    if verbose:
-        print("Summing epochs")
+    logger.info("Summing epochs")
     for i in range(len(epoch_counts[0])):
         epoch_counts[0, i] = np.floor(
             sum(down_sample10_hz[0, i * block_size : i * block_size + block_size])
@@ -306,21 +302,18 @@ def _resample(
 
     del upsample_data
     gc.collect(1)
-    if verbose:
-        print("Created downsample_data")
+    logger.info("Created downsample_data")
     downsample_data = np.round(downsample_data * 1000) / 1000
     return downsample_data
 
 
-def _bpf_filter(downsample_data: npt.NDArray[np.float_], verbose: bool) -> Any:
+def _bpf_filter(downsample_data: npt.NDArray[np.float_]) -> Any:
     """Run BPF Filter.
 
     Parameters
     ----------
     downsample_data:
         Matrix containing downsampled data
-    verbose:
-        Print diagnostic messages
 
     Returns
     -------
@@ -330,8 +323,7 @@ def _bpf_filter(downsample_data: npt.NDArray[np.float_], verbose: bool) -> Any:
     zi = signal.lfilter_zi(INPUT_COEFFICIENTS[0, :], OUTPUT_COEFFICIENTS[0, :]).reshape(
         (1, -1)
     )
-    if verbose:
-        print("Filtering Data")
+    logger.info("Filtering Data")
     bpf_data, _ = signal.lfilter(
         INPUT_COEFFICIENTS[0, :],
         OUTPUT_COEFFICIENTS[0, :],
@@ -350,7 +342,7 @@ def _bpf_filter(downsample_data: npt.NDArray[np.float_], verbose: bool) -> Any:
 
 
 def _trim_data(
-    bpf_data: npt.NDArray[np.float_], lfe_select: bool, verbose: bool
+    bpf_data: npt.NDArray[np.float_], lfe_select: bool
 ) -> Any:
     """Trim/Threshold data.
 
@@ -360,8 +352,6 @@ def _trim_data(
         Matrix containing filtered data
     lfe_select:
         False for regular trimming, True for allow more noise
-    verbose:
-        Print diagnostic messages
 
     Returns
     -------
@@ -369,8 +359,7 @@ def _trim_data(
         The trimmed/thresholded data
     """
     # then threshold/trim
-    if verbose:
-        print("Trimming Data")
+    logger.info("Trimming Data")
     if lfe_select:
         min_count = 1
         max_count = 128 * 1
@@ -395,7 +384,7 @@ def _trim_data(
 
 
 def _resample_10hz(
-    trim_data: npt.NDArray[np.float_], verbose: bool
+    trim_data: npt.NDArray[np.float_],
 ) -> npt.NDArray[np.float64]:
     """Resample the data.
 
@@ -410,8 +399,7 @@ def _resample_10hz(
     resampled_data :
         The resampled_data
     """
-    if verbose:
-        print("Getting data back to 10Hz for accumulation")
+    logger.info("Getting data back to 10Hz for accumulation")
     # hackish downsample to 10 Hz
     downsample_10hz = np.cumsum(trim_data, axis=-1, dtype=float)
     downsample_10hz[:, 3:] = downsample_10hz[:, 3:] - downsample_10hz[:, :-3]
@@ -420,7 +408,7 @@ def _resample_10hz(
 
 
 def _sum_counts(
-    downsample_10hz: npt.NDArray[np.float_], epoch_seconds: int, verbose: bool
+    downsample_10hz: npt.NDArray[np.float_], epoch_seconds: int
 ) -> npt.NDArray[np.float64]:
     """Generate counts.
 
@@ -431,16 +419,13 @@ def _sum_counts(
     epoch_seconds:
         Used to compute how many raw samples are used for
         computing an epoch
-    verbose:
-        Print diagnostic messages
 
     Returns
     -------
     epochs :
         The epochs
     """
-    if verbose:
-        print("Summing epochs")
+    logger.info("Summing epochs")
     # Accumulator for epoch
     block_size = epoch_seconds * 10
     epoch_counts = np.cumsum(downsample_10hz, axis=-1, dtype=float)
@@ -457,7 +442,6 @@ def _extract(
     frequency: int,
     lfe_select: bool,
     epoch_seconds: int,
-    verbose: bool,
 ) -> npt.NDArray[np.float64]:
     """Generate counts.
 
@@ -472,30 +456,30 @@ def _extract(
     epoch_seconds:
         Used to compute how many raw samples are used for
         computing an epoch
-    verbose:
-        Print diagnostic messages
 
     Returns
     -------
     epochs :
         The epochs
     """
-    downsample_data = _resample(raw=raw, frequency=frequency, verbose=verbose)
+    downsample_data = _resample(raw=raw, frequency=frequency)
     del raw
-    bpf_data = _bpf_filter(downsample_data=downsample_data, verbose=verbose)
+    bpf_data = _bpf_filter(downsample_data=downsample_data)
     del downsample_data
-    trim_data = _trim_data(bpf_data=bpf_data, lfe_select=lfe_select, verbose=verbose)
+    trim_data = _trim_data(bpf_data=bpf_data, lfe_select=lfe_select)
     del bpf_data
-    downsample_10hz = _resample_10hz(trim_data=trim_data, verbose=verbose)
+    downsample_10hz = _resample_10hz(trim_data=trim_data)
     del trim_data
     gc.collect(1)
     epoch_counts = _sum_counts(
-        downsample_10hz=downsample_10hz, epoch_seconds=epoch_seconds, verbose=verbose
+        downsample_10hz=downsample_10hz, epoch_seconds=epoch_seconds
     )
     return epoch_counts
 
 
-def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = False):
+def get_counts(
+    raw, freq: int, epoch: int, fast: bool = True, interpolate: bool = False
+):
     """
     Generate counts from raw data.
 
@@ -509,8 +493,9 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
         Epoch length (seconds).
     fast:
         Use fast implementation
-    verbose:
-        Print diagnostic messages
+    interpolate:
+        Use interpolation to directly downsample data from powers of 2 to 30Hz, instead
+        of upsampling to 256Hz and then downsampling to 30Hz.
 
     Returns
     -------
@@ -518,7 +503,7 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
         The counts, n_epochs = ceil(n_samples/freq).
     """
     if freq in [32, 64, 128, 256]:
-        raw = resample_to_30hz(raw, freq)
+        raw = resample_to_30hz(raw, freq, interpolate=interpolate)
         freq = 30
     else:
         assert freq in range(30, 101, 10), (
@@ -526,12 +511,12 @@ def get_counts(raw, freq: int, epoch: int, fast: bool = True, verbose: bool = Fa
         )
 
     if fast:
-        counts = _extract(raw, freq, False, epoch, verbose > 1).transpose()
+        counts = _extract(raw, freq, False, epoch).transpose()
     else:
         axis_counts = []
         for i in range(raw.shape[1]):
             print(f"Running extract for axis {i} of {raw.shape[1]}")
-            axis_counts.append(_extract_slow(raw[0:, [i]], freq, False, epoch, verbose))
+            axis_counts.append(_extract_slow(raw[0:, [i]], freq, False, epoch))
 
         counts = np.concatenate(axis_counts, 0).transpose()
 
