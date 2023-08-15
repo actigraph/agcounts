@@ -42,3 +42,21 @@ def test_counts_cp(agcounts, cp_counts):
 )
 def test_counts_al(agcounts, al_counts):
     assert not (abs(agcounts - al_counts) > 1).any()
+
+
+@pytest.mark.parametrize(
+    "noisy_agcounts,agcounts",
+    [
+        ((30, 30, 0.01), (30, 30)),
+        ((30, 30, 0.02), (30, 30)),
+        ((30, 30, 0.05), (30, 30)),
+        ((30, 30, 0.06), (30, 30)),
+        ((30, 30, 0.07), (30, 30)),
+        ((30, 30, 0.5), (30, 30)),
+        ((30, 30, 50), (30, 30)),
+    ],
+    indirect=True,
+)
+def test_counts_noisy_accel(noisy_agcounts, agcounts):
+    assert not (abs(noisy_agcounts.flatten()[6:] - agcounts.flatten()[6:]) > 1).any()
+
