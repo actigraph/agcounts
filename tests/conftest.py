@@ -48,6 +48,18 @@ def agcounts(request):
 
 
 @pytest.fixture
+def agcounts_better_lpf(request):
+    epoch, freq = request.param
+    signals = pd.read_csv(
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
+    )
+    counts = get_counts(
+        np.array(signals), freq=freq, epoch=epoch, fast=True, interpolate=True
+    )
+    return counts
+
+
+@pytest.fixture
 def cp_counts(request):
     epoch, freq = request.param
     counts = pd.read_csv(

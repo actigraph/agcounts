@@ -41,4 +41,16 @@ def test_counts_cp(agcounts, cp_counts):
     indirect=True,
 )
 def test_counts_al(agcounts, al_counts):
-    assert not (abs(agcounts - al_counts) > 1).any()
+    assert (agcounts == al_counts).all()
+
+
+@pytest.mark.parametrize(
+    "agcounts_better_lpf,al_counts",
+    [
+        ((30, 40), (30, 40)),
+        ((10, 40), (10, 40)),
+    ],
+    indirect=True,
+)
+def test_counts_al_better_lpf(agcounts_better_lpf, al_counts):
+    assert agcounts_better_lpf.shape == al_counts.shape
