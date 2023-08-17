@@ -30,5 +30,5 @@ def test_32hz(input_32hz, output_30hz):
 
 
 def test_32hz_interpolate(input_32hz, output_30hz):
-    resampled = resample_to_30hz(input_32hz, sample_rate=32, interpolate=False)
-    assert np.abs(resampled - output_30hz).max() == pytest.approx(0)
+    resampled = resample_to_30hz(input_32hz, sample_rate=32, interpolate=True)
+    assert np.abs(resampled - output_30hz).max() < 1
