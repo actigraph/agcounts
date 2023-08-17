@@ -1,3 +1,4 @@
+"""Legacy functions in agcounts."""
 import gc
 import logging
 
@@ -91,7 +92,7 @@ def _extract_slow(
     b_fp = (pi - 2 * upsample_factor) / (pi + 2 * upsample_factor)
     l_fp = upsample_factor
 
-    logger.info("Upsampling data")
+    logger.info("Up-sampling data")
     if frequency == 30 or frequency == 60 or frequency == 90:
         lpf_upsample_data = upsample_data
     else:
@@ -107,7 +108,7 @@ def _extract_slow(
 
     # Then downsample by factor M.  Downsampled data is rounded to 3 decimal places
     # before input into BPF.
-    logger.info("Downsampling data")
+    logger.info("Down-sampling data")
     if frequency == 30:
         down_sample_data = raw
     else:

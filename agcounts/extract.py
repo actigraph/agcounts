@@ -15,9 +15,9 @@ from agcounts.legacy import (
 )
 
 try:
-    from mne import filter
+    from mne import filter as mne_filter
 except ImportError:
-    filter = None
+    mne_filter = None
 
 from agcounts.pow2 import resample_to_30hz
 
@@ -28,7 +28,7 @@ def _resample(
     raw: npt.NDArray[np.float_],
     frequency: int,
     interpolate: bool = False,
-) -> npt.NDArray[np.float64]:
+) -> Any:
     """Resample the data.
 
     Parameters
@@ -40,39 +40,26 @@ def _resample(
     interpolate:
         Resample data to 30Hz using MNE's implementation instead of ActiGraph's.
 
-    Downsampling from frequencies other than 30, 60 and 90 involves a low pass filter
-    in order to avoid aliasing. The low-pass filter used in ActiGraph devices before
-    Leap, as well as ActiLife and CenterPoint, needs to be fast and as thus is not
-    immune to leaking higher frequencies [1]_.
-
     Returns
     -------
     resampled_data :
         The resampled_data
 
-    References
-    ----------
-    .. [1] O. McNoleg, "The integration of GIS, remote sensing,
-       expert systems and adaptive co-kriging for environmental habitat
-       modelling of the Highland Haggis using object-oriented, fuzzy-logic
-       and neural-network techniques," Computers & Geosciences, vol. 22,
-       pp. 585-588, 1996.
-
     """
     raw = np.transpose(raw)
     if interpolate:
-        if filter is None:
+        if mne_filter is None:
             logger.error("Interpolating needs MNE. Please install MNE.")
             raise ImportError("mne")
         else:
-            raw = filter.filter_data(
+            raw = mne_filter.filter_data(
                 raw,
                 sfreq=frequency,
                 l_freq=None,
                 h_freq=15,
                 verbose=30,
             )
-        downsample_data = filter.resample(raw, down=frequency / 30)
+        downsample_data = mne_filter.resample(raw, down=frequency / 30)
     else:
         upsample_factor, downsample_factor = _factors(frequency)
 
@@ -85,11 +72,6 @@ def _resample(
         a_fp = pi / (pi + 2 * upsample_factor)
         b_fp = (pi - 2 * upsample_factor) / (pi + 2 * upsample_factor)
         up_factor_fp = upsample_factor
-
-        # raw doesn't need to be used after this
-        if frequency != 30:
-            del raw
-        gc.collect(1)
 
         # Allocate memory and then LPF.  LPF is only done at non
         # integer multiples of 30 Hz. This LPF does a poor job of
@@ -274,7 +256,7 @@ def _extract(
         Used to compute how many raw samples are used for
         computing an epoch
     interpolate:
-        Use interpolation and mne low-pass filters for downsampling to 30Hz instead of
+        Use interpolation and mne low-pass filters for down-sampling to 30Hz instead of
         legacy filters.
 
     Returns
@@ -314,13 +296,27 @@ def get_counts(
     fast:
         Use fast implementation
     interpolate:
-        Use interpolation to directly down-sample data to 30Hz, instead of legacy
-        ActiGraph down-sampling.
+        Use interpolation to directly down-sample data to 30Hz, instead of using
+        legacy ActiGraph down-sampling method which maintains identical counts.
+
+    Down-sampling from frequencies other than 30, 60 and 90 involves a low pass filter
+    in order to avoid aliasing. The low-pass filter used in ActiGraph devices before
+    Leap, as well as ActiLife and CenterPoint, needs to be fast and as thus is not
+    immune to leaking higher frequencies [1]_.
 
     Returns
     -------
     counts : ndarray, shape (n_epochs, ANY)
         The counts, n_epochs = ceil(n_samples/freq).
+
+    References
+    ----------
+    .. [1] O. McNoleg, "The integration of GIS, remote sensing,
+       expert systems and adaptive co-kriging for environmental habitat
+       modelling of the Highland Haggis using object-oriented, fuzzy-logic
+       and neural-network techniques," Computers & Geosciences, vol. 22,
+       pp. 585-588, 1996.
+
     """
     if freq in [32, 64, 128, 256]:
         raw = resample_to_30hz(raw, freq, interpolate=interpolate)
