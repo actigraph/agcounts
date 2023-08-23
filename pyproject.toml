@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agcounts"
-version = "0.1.7"
+version = "0.2.0"
 description = "This project contains code to generate activity counts from accelerometer data."
 authors = ["Actigraph LLC <data.science@theactigraph.com>"]
 maintainers = ["Ali Neishabouri <ali.neishabouri@theactigraph.com>"]
