@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 def _resample(
     raw: npt.NDArray[np.float_],
     frequency: int,
-    interpolate: bool = False,
+    use_mne_filter: bool = False,
 ) -> Any:
     """Resample the data.
 
@@ -37,8 +37,9 @@ def _resample(
         Matrix containing raw data
     frequency:
         sample frequency of raw data (Hz)
-    interpolate:
-        Resample data to 30Hz using MNE's implementation instead of ActiGraph's.
+    use_mne_filter:
+        Resample data to 30Hz using MNE's implementation of low pass filter and resample
+        instead of ActiGraph's.
 
     Returns
     -------
@@ -47,7 +48,7 @@ def _resample(
 
     """
     raw = np.transpose(raw)
-    if interpolate:
+    if use_mne_filter:
         if mne_filter is None:
             logger.error("Interpolating needs MNE. Please install MNE.")
             raise ImportError("mne")
@@ -264,7 +265,9 @@ def _extract(
     epochs :
         The epochs
     """
-    downsample_data = _resample(raw=raw, frequency=frequency, interpolate=interpolate)
+    downsample_data = _resample(
+        raw=raw, frequency=frequency, use_mne_filter=interpolate
+    )
     del raw
     bpf_data = _bpf_filter(downsample_data=downsample_data)
     del downsample_data
@@ -280,7 +283,11 @@ def _extract(
 
 
 def get_counts(
-    raw, freq: int, epoch: int, fast: bool = True, interpolate: bool = False
+    raw,
+    freq: int,
+    epoch: int,
+    fast: bool = True,
+    use_mne: bool = False,
 ):
     """
     Generate counts from raw data.
@@ -295,9 +302,9 @@ def get_counts(
         Epoch length (seconds).
     fast:
         Use fast implementation
-    interpolate:
-        Use interpolation to directly down-sample data to 30Hz, instead of using
-        legacy ActiGraph down-sampling method which maintains identical counts.
+    use_mne:
+        Use MNE to directly down-sample data to 30Hz, instead of using legacy ActiGraph
+        down-sampling method which maintains identical counts.
 
     Down-sampling from frequencies other than 30, 60 and 90 involves a low pass filter
     in order to avoid aliasing. The low-pass filter used in ActiGraph devices before
@@ -319,16 +326,17 @@ def get_counts(
 
     """
     if freq in [32, 64, 128, 256]:
-        raw = resample_to_30hz(raw, freq, interpolate=interpolate)
+        raw = resample_to_30hz(raw, freq, use_mne_filter=use_mne)  # type: ignore
         freq = 30
     else:
-        assert interpolate or (freq in range(30, 101, 10)), (
+        assert use_mne or (freq in [30, 40, 50, 60, 70, 80, 90, 100]), (
             "freq must be in [30 : 10 : 100], or a power of 2 between 32 and 256."
             "Try setting `interpolate=True` otherwise."
         )
 
     if fast:
-        counts = _extract(raw, freq, False, epoch, interpolate).transpose()
+        counts = _extract(
+            raw, freq, False, epoch, use_mne).transpose()
     else:
         axis_counts = []
         for i in range(raw.shape[1]):

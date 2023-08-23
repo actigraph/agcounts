@@ -54,7 +54,7 @@ def agcounts_better_lpf(request):
         raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
     counts = get_counts(
-        np.array(signals), freq=freq, epoch=epoch, fast=True, interpolate=True
+        np.array(signals), freq=freq, epoch=epoch, fast=True, use_mne=True
     )
     return counts
 

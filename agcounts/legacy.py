@@ -210,22 +210,14 @@ def _extract_slow(
 
 
 def _factors(frequency: int):
-    if frequency == 30:
-        upsample_factor, downsample_factor = 1, 1
-    elif frequency == 40:
-        upsample_factor, downsample_factor = 3, 4
-    elif frequency == 50:
-        upsample_factor, downsample_factor = 3, 5
-    elif frequency == 60:
-        upsample_factor, downsample_factor = 1, 2
-    elif frequency == 70:
-        upsample_factor, downsample_factor = 3, 7
-    elif frequency == 80:
-        upsample_factor, downsample_factor = 3, 8
-    elif frequency == 90:
-        upsample_factor, downsample_factor = 1, 3
-    elif frequency == 100:
-        upsample_factor, downsample_factor = 3, 10
-    else:
-        upsample_factor, downsample_factor = 1, 1
-    return upsample_factor, downsample_factor
+    factors = {
+        30: (1, 1),
+        40: (3, 4),
+        50: (3, 5),
+        60: (1, 2),
+        70: (3, 7),
+        80: (3, 8),
+        90: (1, 3),
+        100: (3, 10),
+    }
+    return factors.get(frequency, (1, 1))
