@@ -48,6 +48,8 @@ def _resample(
 
     """
     raw = np.transpose(raw)
+    if frequency == 30:
+        return np.round(raw, decimals=3)
     if use_mne_filter:
         if mne_filter is None:
             logger.error("Interpolating needs MNE. Please install MNE.")
@@ -335,8 +337,7 @@ def get_counts(
         )
 
     if fast:
-        counts = _extract(
-            raw, freq, False, epoch, use_mne).transpose()
+        counts = _extract(raw, freq, False, epoch, use_mne).transpose()
     else:
         axis_counts = []
         for i in range(raw.shape[1]):
