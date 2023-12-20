@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agcounts"
-version = "0.2.1"
+version = "0.2.2"
 description = "This project contains code to generate activity counts from accelerometer data."
 authors = ["Actigraph LLC <data.science@theactigraph.com>"]
 maintainers = ["Ali Neishabouri <ali.neishabouri@theactigraph.com>"]
@@ -17,7 +17,7 @@ mne = ">=1.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^23.9.1"
-mypy = "^1.5.1"
+mypy = ">=1.5.1"
 flake8 = "^6.1.0"
 pydocstyle = "^6.3.0"
 pytest = "^7.4.2"

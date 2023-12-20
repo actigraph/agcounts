@@ -55,14 +55,7 @@ def _resample(
             logger.error("Interpolating needs MNE. Please install MNE.")
             raise ImportError("mne")
         else:
-            raw = mne_filter.filter_data(
-                raw,
-                sfreq=frequency,
-                l_freq=None,
-                h_freq=15,
-                verbose=30,
-            )
-        downsample_data = mne_filter.resample(raw, down=frequency / 30)
+            downsample_data = mne_filter.resample(raw, down=frequency / 30)
     else:
         upsample_factor, downsample_factor = _factors(frequency)
 
