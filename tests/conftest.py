@@ -65,8 +65,8 @@ def cp_counts(request):
     counts = pd.read_csv(
         cp_data_path / f"raw_{epoch}_{freq}_CentrePointCounts.csv", skiprows=0
     )
-    counts = counts[["X (axis 2)", "Y (axis 1)", "Z (axis3)"]].to_numpy()
-    return counts
+    counts_axes = counts[["X (axis 2)", "Y (axis 1)", "Z (axis3)"]].to_numpy()
+    return counts_axes
 
 
 @pytest.fixture
@@ -75,8 +75,8 @@ def al_counts(request):
     counts = pd.read_csv(
         al_data_path / f"raw_{epoch}_{freq}_counts{epoch}sec.csv", skiprows=10
     )
-    counts = counts[["Axis2", "Axis1", "Axis3"]].to_numpy()
-    return counts
+    counts_axes = counts[["Axis2", "Axis1", "Axis3"]].to_numpy()
+    return counts_axes
 
 
 @pytest.fixture
