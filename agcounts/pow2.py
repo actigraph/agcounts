@@ -35,15 +35,8 @@ def resample_to_30hz(
         if filter is None:
             logger.error("Interpolating needs MNE. Please install MNE.")
             raise ImportError("mne")
-        filtered = filter.filter_data(
-            data.transpose(),
-            sfreq=sample_rate,
-            l_freq=None,
-            h_freq=15,
-            verbose=30,
-        )
-        data = filter.resample(filtered, down=sample_rate / 30).transpose()
-        del filtered
+
+        data = filter.resample(data, down=sample_rate / 30, axis=0)
     else:
         data = upsample_to_256hz(data, sample_rate)
         data = taso_lpf(data)

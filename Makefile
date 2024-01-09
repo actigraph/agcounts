@@ -1,4 +1,4 @@
-.PHONY: png pdf test test_fast lint figures clean
+.PHONY: png pdf test test_fast format lint figures clean
 SOURCES := $(wildcard figs/*.dot)
 PNGS = $(SOURCES:.dot=.png)
 PDFS = $(SOURCES:.dot=.pdf)
@@ -23,6 +23,10 @@ test: data
 
 test_fast: data
 	python -m pytest -k cp
+
+format:
+	isort agcounts tests
+	black --preview agcounts tests
 
 lint:
 	flake8 agcounts tests

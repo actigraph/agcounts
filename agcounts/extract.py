@@ -1,4 +1,5 @@
 """Function for extracting counts."""
+
 import gc
 import logging
 from typing import Any
