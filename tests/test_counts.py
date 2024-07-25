@@ -71,4 +71,3 @@ def test_counts_al_better_lpf(agcounts_better_lpf, al_counts):
 )
 def test_counts_noisy_accel(noisy_agcounts, agcounts):
     assert not (abs(noisy_agcounts.flatten()[6:] - agcounts.flatten()[6:]) > 1).any()
-

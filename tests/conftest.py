@@ -53,7 +53,7 @@ def noisy_agcounts(request):
     signals = pd.read_csv(
         raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     ).values
-    signals[:, 2] = signals[:,2] + offset
+    signals[:, 2] = signals[:, 2] + offset
     counts = get_counts(signals, freq=freq, epoch=epoch, fast=True)
     return counts
 
