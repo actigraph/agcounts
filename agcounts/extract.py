@@ -160,13 +160,17 @@ def _trim_data(bpf_data: npt.NDArray[np.float_], lfe_select: bool) -> Any:
         max_count = 128 * 1
 
         trim_data = np.abs(bpf_data)
-        trim_data[(trim_data < min_count) & (trim_data >= 4)] = 0
-        trim_data[trim_data > max_count] = max_count
-        mask = (trim_data < 4) & (trim_data >= min_count)
-        trim_data[mask] = np.abs(trim_data[mask]) - 1
-        trim_data = np.floor(trim_data)
-        del mask
+        mask_larger_than_max = trim_data > max_count
+        mask_smaller_than_min = trim_data < min_count
+        mask_smaller_than_4 = (trim_data < 4) & (trim_data >= min_count)
+        mask_other = ~(
+            mask_smaller_than_4 | mask_smaller_than_min | mask_larger_than_max
+        )
 
+        trim_data[mask_larger_than_max] = max_count
+        trim_data[mask_smaller_than_min] = 0
+        trim_data[mask_smaller_than_4] = np.floor(trim_data) - 1
+        trim_data[mask_other] = np.floor(trim_data)
     else:
         min_count = 4
         max_count = 128
