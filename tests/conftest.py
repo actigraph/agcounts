@@ -43,7 +43,18 @@ def agcounts(request):
     signals = pd.read_csv(
         raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
     )
-    counts = get_counts(np.array(signals), freq=freq, epoch=epoch, fast=True)
+    counts = get_counts(signals.values, freq=freq, epoch=epoch, fast=True)
+    return counts
+
+
+@pytest.fixture
+def noisy_agcounts(request):
+    epoch, freq, offset = request.param
+    signals = pd.read_csv(
+        raw_data_path / f"raw_{epoch}_{freq}.csv.gz", skiprows=0, header=None
+    ).values
+    signals[:, 2] = signals[:, 2] + offset
+    counts = get_counts(signals, freq=freq, epoch=epoch, fast=True)
     return counts
 
 
