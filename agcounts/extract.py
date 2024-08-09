@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def _resample(
-    raw: npt.NDArray[np.float_],
+    raw: npt.NDArray[np.float64],
     frequency: int,
     use_mne_filter: bool = False,
 ) -> Any:
@@ -104,7 +104,7 @@ def _resample(
     return downsample_data
 
 
-def _bpf_filter(downsample_data: npt.NDArray[np.float_]) -> Any:
+def _bpf_filter(downsample_data: npt.NDArray[np.float64]) -> Any:
     """Run BPF Filter.
 
     Parameters
@@ -138,7 +138,7 @@ def _bpf_filter(downsample_data: npt.NDArray[np.float_]) -> Any:
     return bpf_data
 
 
-def _trim_data(bpf_data: npt.NDArray[np.float_], lfe_select: bool) -> Any:
+def _trim_data(bpf_data: npt.NDArray[np.float64], lfe_select: bool) -> Any:
     """Trim/Threshold data.
 
     Parameters
@@ -183,7 +183,7 @@ def _trim_data(bpf_data: npt.NDArray[np.float_], lfe_select: bool) -> Any:
 
 
 def _resample_10hz(
-    trim_data: npt.NDArray[np.float_],
+    trim_data: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """Resample the data.
 
@@ -207,7 +207,7 @@ def _resample_10hz(
 
 
 def _sum_counts(
-    downsample_10hz: npt.NDArray[np.float_], epoch_seconds: int
+    downsample_10hz: npt.NDArray[np.float64], epoch_seconds: int
 ) -> npt.NDArray[np.float64]:
     """Generate counts.
 
@@ -237,7 +237,7 @@ def _sum_counts(
 
 
 def _extract(
-    raw: npt.NDArray[np.float_],
+    raw: npt.NDArray[np.float64],
     frequency: int,
     lfe_select: bool,
     epoch_seconds: int,

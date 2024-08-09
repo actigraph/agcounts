@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 # BPF. There are extraneous coefficients as to match constants
 # in ActiLife.
 # Input data coefficients.
-INPUT_COEFFICIENTS: npt.NDArray[np.float_] = np.array(
+INPUT_COEFFICIENTS: npt.NDArray[np.float64] = np.array(
     [
         [
             -0.009341062898525,
@@ -27,7 +27,7 @@ INPUT_COEFFICIENTS: npt.NDArray[np.float_] = np.array(
 )
 
 # Output data coefficients.
-OUTPUT_COEFFICIENTS: npt.NDArray[np.float_] = np.array(
+OUTPUT_COEFFICIENTS: npt.NDArray[np.float64] = np.array(
     [
         [
             1.00000000000000000000,
@@ -45,7 +45,7 @@ OUTPUT_COEFFICIENTS: npt.NDArray[np.float_] = np.array(
 
 
 def _extract_slow(
-    raw: npt.NDArray[np.float_],
+    raw: npt.NDArray[np.float64],
     frequency: int,
     lfe_select: bool,
     epoch: int,
