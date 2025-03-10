@@ -1,9 +1,0 @@
-.DS_Store
-.idea
-*.pdf
-*.pyc
-*.png
-poetry.lock
-.ipynb_checkpoints
-*back
-dist
