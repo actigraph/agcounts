@@ -45,14 +45,14 @@ def get_counts_csv(
     raw = np.array(raw)
     if verbose:
         print("Getting Counts", flush=True)
-    counts = get_counts(raw, freq=freq, epoch=epoch, fast=fast, verbose=verbose)
+    counts = get_counts(raw, freq=freq, epoch=epoch, fast=fast)
     del raw
     counts = pd.DataFrame(counts, columns=["Axis1", "Axis2", "Axis3"])
     counts["AC"] = (
         counts["Axis1"] ** 2 + counts["Axis2"] ** 2 + counts["Axis3"] ** 2
     ) ** 0.5
-    ts = ts[0 : counts.shape[0]]
     if time_column is not None:
+        ts = ts[0 : counts.shape[0]]
         counts = pd.concat([ts, counts], axis=1)
     return counts
 
@@ -60,14 +60,13 @@ def get_counts_csv(
 def convert_counts_csv(
     file,
     outfile,
-    freq: int,
-    epoch: int,
-    fast: bool = True,
+    freq: int=80,
+    epoch: int=60,
     verbose: bool = False,
     time_column: str = None,
 ):
     counts = get_counts_csv(
-        file, freq=80, epoch=60, verbose=True, time_column=time_column
+        file, freq=freq, epoch=epoch, verbose=verbose, time_column=time_column
     )
     counts.to_csv(outfile, index=False)
     return counts
