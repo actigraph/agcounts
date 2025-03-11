@@ -105,7 +105,7 @@ def _extract_slow(
             )
 
     if frequency not in [30, 60, 90]:
-        lpf_upsample_data = lpf_upsample_data[:, 1:]
+        lpf_upsample_data = lpf_upsample_data[:, 1:]  # type: ignore
 
     # Then downsample by factor M.  Downsampled data is rounded to 3 decimal places
     # before input into BPF.
@@ -124,7 +124,7 @@ def _extract_slow(
 
     down_sample_data = np.round(down_sample_data * 1000) / 1000
 
-    bpf_data: npt.NDArray[np.float_] = np.zeros((1, len(down_sample_data[0])))
+    bpf_data: npt.NDArray[np.floating] = np.zeros((1, len(down_sample_data[0])))
 
     shift_reg_in = np.zeros((1, 9))
     shift_reg_out = np.zeros((1, 9))
