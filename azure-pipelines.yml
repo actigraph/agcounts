@@ -6,14 +6,14 @@ pool:
 
 strategy:
   matrix:
-    Python38:
-      python.version: '3.8'
     Python39:
       python.version: '3.9'
     Python310:
       python.version: '3.10'
     Python311:
       python.version: '3.11'
+    Python312:
+      python.version: '3.12'
 
 steps:
 - checkout: self
@@ -25,17 +25,17 @@ steps:
   displayName: 'Use Python $(python.version)'
 
 - script: |
-    python -m pip install --upgrade pip poetry keyring artifacts-keyring
+    python -m pip install --upgrade pip uv
   displayName: 'Install package and tools'
 
 - script: |
-    poetry install
+    uv sync
   condition: always()
 
 - script: |
-    poetry run make lint
+    uv run make lint
   displayName: 'Check for style'
 
 - script: |
-    poetry run make test
+    uv run make test
   displayName: 'Run regression tests'
